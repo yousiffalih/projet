@@ -1,0 +1,13 @@
+import pg from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
+const { Pool } = pg;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const dbRes = await pool.query('SELECT current_database(), current_user');
+console.log('current_database=' + dbRes.rows[0].current_database);
+console.log('current_user=' + dbRes.rows[0].current_user);
+const tables = await pool.query("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name");
+console.log(JSON.stringify(tables.rows, null, 2));
+const users = await pool.query('SELECT id, full_name, email, role FROM users ORDER BY id');
+console.log(JSON.stringify(users.rows, null, 2));
+await pool.end();
