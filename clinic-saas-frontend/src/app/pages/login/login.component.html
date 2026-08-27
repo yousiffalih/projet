@@ -1,0 +1,176 @@
+<section class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center p-4">
+
+  <!-- Background decorative blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-teal-500 rounded-full opacity-10 blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
+  </div>
+
+  <!-- Login Card -->
+  <div class="relative w-full max-w-md">
+
+    <!-- Logo / Brand -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-teal-400 to-blue-500 rounded-2xl shadow-lg mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4.5 12.5l2 2 4-4m0 0l4 4 4-4M12 3v9" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 3C7.029 3 3 7.029 3 12s4.029 9 9 9 9-4.029 9-9-4.029-9-9-9z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white tracking-tight">ClinicSaaS</h1>
+      <p class="text-slate-400 text-sm mt-1">منصة إدارة العيادات الذكية</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8">
+
+      <h2 class="text-xl font-semibold text-white mb-1">تسجيل الدخول</h2>
+      <p class="text-slate-400 text-sm mb-8">أدخل بياناتك للوصول إلى لوحة التحكم</p>
+
+      <!-- Session Expired Banner -->
+      <div *ngIf="sessionExpired"
+        class="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm rounded-xl px-4 py-3 mb-6">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p class="font-medium">انتهت صلاحية جلستك</p>
+          <p class="text-amber-400/70 text-xs mt-0.5">لأسباب أمنية، يجب تسجيل الدخول مجدداً للمتابعة</p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage"
+        class="flex items-start gap-3 bg-red-500/10 border border-red-500/30 text-red-300 text-sm rounded-xl px-4 py-3 mb-6 animate-fade-in">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5" dir="rtl">
+
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-slate-300 mb-2">
+            البريد الإلكتروني
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 right-3 flex items-center text-slate-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="doctor@clinic.com"
+              dir="ltr"
+              class="w-full bg-white/5 border rounded-xl px-4 py-3 pr-10 text-white placeholder-slate-500 text-sm
+                     transition-all duration-200 outline-none
+                     focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50
+                     [&.ng-invalid.ng-touched]:border-red-500/50 [&.ng-invalid.ng-touched]:ring-red-500/20
+                     [&.ng-valid.ng-touched]:border-teal-500/50"
+              [class.border-white/10]="!email.touched || email.valid"
+              [class.border-red-500/50]="email.touched && email.invalid"
+            />
+          </div>
+          <p *ngIf="email.touched && email.hasError('required')"
+            class="text-red-400 text-xs mt-1.5">البريد الإلكتروني مطلوب</p>
+          <p *ngIf="email.touched && email.hasError('email')"
+            class="text-red-400 text-xs mt-1.5">صيغة البريد الإلكتروني غير صحيحة</p>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
+            كلمة المرور
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 right-3 flex items-center text-slate-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </span>
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              dir="ltr"
+              class="w-full bg-white/5 border rounded-xl px-4 py-3 pr-10 pl-10 text-white placeholder-slate-500 text-sm
+                     transition-all duration-200 outline-none
+                     focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50"
+              [class.border-white/10]="!password.touched || password.valid"
+              [class.border-red-500/50]="password.touched && password.invalid"
+            />
+            <!-- Toggle password visibility -->
+            <button type="button" (click)="togglePassword()"
+              class="absolute inset-y-0 left-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors">
+              <svg *ngIf="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg *ngIf="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            </button>
+          </div>
+          <p *ngIf="password.touched && password.hasError('required')"
+            class="text-red-400 text-xs mt-1.5">كلمة المرور مطلوبة</p>
+          <p *ngIf="password.touched && password.hasError('minlength')"
+            class="text-red-400 text-xs mt-1.5">كلمة المرور يجب أن تكون 6 أحرف على الأقل</p>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          id="login-submit-btn"
+          type="submit"
+          [disabled]="isLoading"
+          class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-500 to-blue-600
+                 hover:from-teal-400 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-xl
+                 transition-all duration-200 shadow-lg shadow-teal-500/20
+                 disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none
+                 focus:outline-none focus:ring-2 focus:ring-teal-500/50 mt-2">
+
+          <!-- Spinner -->
+          <svg *ngIf="isLoading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+
+          <span>{{ isLoading ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول' }}</span>
+        </button>
+
+      </form>
+
+      <!-- Register Link -->
+      <div class="mt-6 pt-5 border-t border-white/5 text-center">
+        <p class="text-slate-400 text-sm">
+          ليس لديك حساب عيادة؟
+          <a routerLink="/register" class="text-teal-400 hover:text-teal-300 font-medium transition-colors mr-1">
+            سجّل عيادتك الآن
+          </a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <p class="text-center text-slate-500 text-xs mt-6">
+        © 2025 ClinicSaaS · جميع الحقوق محفوظة
+      </p>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,460 @@
+<div dir="rtl" class="settings-page">
+
+  <!-- ══ PAGE HEADER ══ -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">الإعدادات</h1>
+      <p class="page-subtitle">إدارة معلومات العيادة وحسابك الشخصي</p>
+    </div>
+  </div>
+
+  <!-- ══ TABS ══ -->
+  <div class="tabs-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'clinic'" (click)="setTab('clinic')">
+      <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+      </svg>
+      <span>معلومات العيادة</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'profile'" (click)="setTab('profile')">
+      <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+      <span>الملف الشخصي</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'password'" (click)="setTab('password')">
+      <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+      </svg>
+      <span>كلمة المرور</span>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TAB 1 — معلومات العيادة
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'clinic'" class="tab-content">
+    <div class="content-grid">
+
+      <!-- Form Card -->
+      <div class="card form-card">
+        <div class="card-header">
+          <h2 class="card-title">بيانات العيادة</h2>
+          <p class="card-desc">المعلومات الأساسية للعيادة التي تظهر للمرضى والتقارير</p>
+        </div>
+
+        <!-- Skeleton -->
+        <div *ngIf="isLoadingClinic" class="skeleton-form">
+          <div *ngFor="let s of [1,2,3,4]" class="skeleton-field">
+            <div class="skel-label"></div>
+            <div class="skel-input"></div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form *ngIf="!isLoadingClinic" [formGroup]="clinicForm" (ngSubmit)="saveClinic()" class="settings-form">
+
+          <!-- Alert Error -->
+          <div *ngIf="clinicError" class="alert alert-error">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ clinicError }}
+          </div>
+          <!-- Alert Success -->
+          <div *ngIf="clinicSuccess" class="alert alert-success">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ clinicSuccess }}
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">اسم العيادة <span class="required">*</span></label>
+            <input formControlName="name" type="text" placeholder="مثال: عيادة الشفاء الطبية"
+              class="field-input" [class.invalid]="clinicForm.get('name')?.invalid && clinicForm.get('name')?.touched"/>
+            <span *ngIf="clinicForm.get('name')?.invalid && clinicForm.get('name')?.touched"
+              class="field-error">اسم العيادة مطلوب</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">العنوان</label>
+            <input formControlName="address" type="text" placeholder="مثال: شارع الملك فهد، الرياض"
+              class="field-input"/>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label">رقم الهاتف</label>
+              <input formControlName="phone" type="tel" placeholder="05xxxxxxxx"
+                class="field-input" dir="ltr"/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">البريد الإلكتروني</label>
+              <input formControlName="email" type="email" placeholder="clinic@example.com"
+                class="field-input" dir="ltr"
+                [class.invalid]="clinicForm.get('email')?.invalid && clinicForm.get('email')?.touched"/>
+              <span *ngIf="clinicForm.get('email')?.invalid && clinicForm.get('email')?.touched"
+                class="field-error">البريد الإلكتروني غير صحيح</span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="clinicForm.invalid || isSavingClinic">
+              <svg *ngIf="isSavingClinic" class="spinner" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              <svg *ngIf="!isSavingClinic" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+              </svg>
+              {{ isSavingClinic ? 'جاري الحفظ...' : 'حفظ التغييرات' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Info Card -->
+      <div class="card info-card">
+        <div class="card-header">
+          <h2 class="card-title">معلومات الاشتراك</h2>
+          <p class="card-desc">تفاصيل خطة الاشتراك الحالية</p>
+        </div>
+
+        <div *ngIf="isLoadingClinic" class="space-y-3">
+          <div *ngFor="let s of [1,2,3]" class="skel-info-row"></div>
+        </div>
+
+        <div *ngIf="!isLoadingClinic && clinic" class="info-list">
+
+          <div class="info-item">
+            <span class="info-label">خطة الاشتراك</span>
+            <span class="plan-badge" [class]="getPlanBadgeClass(clinic.subscription_plan)">
+              {{ clinic.subscription_plan }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">حالة الاشتراك</span>
+            <span class="status-dot" [class.active]="clinic.subscription_status === 'Active'">
+              <span class="dot"></span>
+              {{ clinic.subscription_status === 'Active' ? 'نشط' : clinic.subscription_status }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">تاريخ التسجيل</span>
+            <span class="info-value">{{ formatDate(clinic.created_at) }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">رقم العيادة</span>
+            <span class="info-value mono">#{{ clinic.id }}</span>
+          </div>
+        </div>
+
+        <!-- Upgrade Banner -->
+        <div *ngIf="!isLoadingClinic && clinic?.subscription_plan?.toLowerCase() === 'basic'" class="upgrade-banner">
+          <div class="upgrade-icon">⚡</div>
+          <div>
+            <p class="upgrade-title">ترقية إلى Premium</p>
+            <p class="upgrade-desc">احصل على تقارير متقدمة وميزات حصرية</p>
+          </div>
+          <button class="upgrade-btn">ترقية</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TAB 2 — الملف الشخصي
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'profile'" class="tab-content">
+    <div class="content-grid">
+
+      <!-- Form Card -->
+      <div class="card form-card">
+        <div class="card-header">
+          <h2 class="card-title">بياناتك الشخصية</h2>
+          <p class="card-desc">المعلومات المرتبطة بحسابك في النظام</p>
+        </div>
+
+        <!-- Skeleton -->
+        <div *ngIf="isLoadingProfile" class="skeleton-form">
+          <div *ngFor="let s of [1,2]" class="skeleton-field">
+            <div class="skel-label"></div>
+            <div class="skel-input"></div>
+          </div>
+        </div>
+
+        <form *ngIf="!isLoadingProfile" [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="settings-form">
+
+          <div *ngIf="profileError" class="alert alert-error">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ profileError }}
+          </div>
+          <div *ngIf="profileSuccess" class="alert alert-success">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ profileSuccess }}
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">الاسم الكامل <span class="required">*</span></label>
+            <input formControlName="full_name" type="text" placeholder="الاسم الكامل"
+              class="field-input"
+              [class.invalid]="profileForm.get('full_name')?.invalid && profileForm.get('full_name')?.touched"/>
+            <span *ngIf="profileForm.get('full_name')?.invalid && profileForm.get('full_name')?.touched"
+              class="field-error">الاسم الكامل مطلوب</span>
+          </div>
+
+          <!-- Email (read-only) -->
+          <div class="field-group">
+            <label class="field-label">البريد الإلكتروني</label>
+            <div class="readonly-field">
+              <span>{{ profile?.email }}</span>
+              <span class="readonly-tag">لا يمكن تغييره</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">رقم الهاتف</label>
+            <input formControlName="phone" type="tel" placeholder="05xxxxxxxx"
+              class="field-input" dir="ltr"/>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="profileForm.invalid || isSavingProfile">
+              <svg *ngIf="isSavingProfile" class="spinner" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              <svg *ngIf="!isSavingProfile" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+              </svg>
+              {{ isSavingProfile ? 'جاري الحفظ...' : 'حفظ التغييرات' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Profile Info Card -->
+      <div class="card info-card">
+        <div class="card-header">
+          <h2 class="card-title">معلومات الحساب</h2>
+        </div>
+
+        <div *ngIf="isLoadingProfile" class="space-y-3">
+          <div *ngFor="let s of [1,2,3]" class="skel-info-row"></div>
+        </div>
+
+        <div *ngIf="!isLoadingProfile && profile" class="profile-avatar-section">
+          <!-- Avatar -->
+          <div class="avatar-wrapper">
+            <div class="avatar-circle">
+              {{ profile.full_name?.charAt(0) || 'U' }}
+            </div>
+            <div class="avatar-info">
+              <p class="avatar-name">{{ profile.full_name }}</p>
+              <p class="avatar-role">{{ profile.role === 'ADMIN' ? 'مدير النظام' : (profile.role === 'DOCTOR' ? 'طبيب' : profile.role) }}</p>
+            </div>
+          </div>
+
+          <div class="info-list mt-4">
+            <div *ngIf="profile.specialty" class="info-item">
+              <span class="info-label">التخصص</span>
+              <span class="info-value">{{ profile.specialty }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">تاريخ الانضمام</span>
+              <span class="info-value">{{ formatDate(profile.created_at) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">رقم الحساب</span>
+              <span class="info-value mono">#{{ profile.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TAB 3 — كلمة المرور
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'password'" class="tab-content">
+    <div class="password-grid">
+
+      <div class="card form-card">
+        <div class="card-header">
+          <h2 class="card-title">تغيير كلمة المرور</h2>
+          <p class="card-desc">اختر كلمة مرور قوية تحتوي على أحرف وأرقام</p>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" class="settings-form">
+
+          <div *ngIf="passwordError" class="alert alert-error">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ passwordError }}
+          </div>
+          <div *ngIf="passwordSuccess" class="alert alert-success">
+            <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ passwordSuccess }}
+          </div>
+
+          <!-- Current Password -->
+          <div class="field-group">
+            <label class="field-label">كلمة المرور الحالية <span class="required">*</span></label>
+            <div class="password-input-wrap">
+              <input formControlName="current_password"
+                [type]="showCurrentPassword ? 'text' : 'password'"
+                placeholder="••••••••" class="field-input" dir="ltr"
+                [class.invalid]="passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched"/>
+              <button type="button" class="eye-btn" (click)="showCurrentPassword = !showCurrentPassword">
+                <svg *ngIf="!showCurrentPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <svg *ngIf="showCurrentPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- New Password -->
+          <div class="field-group">
+            <label class="field-label">كلمة المرور الجديدة <span class="required">*</span></label>
+            <div class="password-input-wrap">
+              <input formControlName="new_password"
+                [type]="showNewPassword ? 'text' : 'password'"
+                placeholder="6 أحرف على الأقل" class="field-input" dir="ltr"
+                [class.invalid]="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched"/>
+              <button type="button" class="eye-btn" (click)="showNewPassword = !showNewPassword">
+                <svg *ngIf="!showNewPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <svg *ngIf="showNewPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                </svg>
+              </button>
+            </div>
+            <span *ngIf="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched"
+              class="field-error">كلمة المرور يجب أن تكون 6 أحرف على الأقل</span>
+
+            <!-- Strength Indicator -->
+            <div *ngIf="passwordForm.get('new_password')?.value" class="strength-wrap">
+              <div class="strength-bar">
+                <div class="strength-fill"
+                  [style.width]="(passwordForm.get('new_password')?.value?.length || 0) >= 10 ? '100%' :
+                                  (passwordForm.get('new_password')?.value?.length || 0) >= 7 ? '66%' : '33%'"
+                  [class.weak]="(passwordForm.get('new_password')?.value?.length || 0) < 7"
+                  [class.medium]="(passwordForm.get('new_password')?.value?.length || 0) >= 7 && (passwordForm.get('new_password')?.value?.length || 0) < 10"
+                  [class.strong]="(passwordForm.get('new_password')?.value?.length || 0) >= 10">
+                </div>
+              </div>
+              <span class="strength-text"
+                [class.text-red-400]="(passwordForm.get('new_password')?.value?.length || 0) < 7"
+                [class.text-amber-400]="(passwordForm.get('new_password')?.value?.length || 0) >= 7 && (passwordForm.get('new_password')?.value?.length || 0) < 10"
+                [class.text-teal-400]="(passwordForm.get('new_password')?.value?.length || 0) >= 10">
+                {{ (passwordForm.get('new_password')?.value?.length || 0) >= 10 ? 'قوية' :
+                   (passwordForm.get('new_password')?.value?.length || 0) >= 7 ? 'متوسطة' : 'ضعيفة' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="field-group">
+            <label class="field-label">تأكيد كلمة المرور <span class="required">*</span></label>
+            <div class="password-input-wrap">
+              <input formControlName="confirm_password"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                placeholder="أعد كتابة كلمة المرور" class="field-input" dir="ltr"
+                [class.invalid]="passwordForm.errors?.['mismatch'] && passwordForm.get('confirm_password')?.touched"/>
+              <button type="button" class="eye-btn" (click)="showConfirmPassword = !showConfirmPassword">
+                <svg *ngIf="!showConfirmPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <svg *ngIf="showConfirmPassword" class="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                </svg>
+              </button>
+            </div>
+            <span *ngIf="passwordForm.errors?.['mismatch'] && passwordForm.get('confirm_password')?.touched"
+              class="field-error">كلمتا المرور غير متطابقتين</span>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-danger"
+              [disabled]="passwordForm.invalid || isSavingPassword">
+              <svg *ngIf="isSavingPassword" class="spinner" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              <svg *ngIf="!isSavingPassword" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              {{ isSavingPassword ? 'جاري التغيير...' : 'تغيير كلمة المرور' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Security Tips -->
+      <div class="card tips-card">
+        <div class="card-header">
+          <h2 class="card-title">نصائح الأمان</h2>
+        </div>
+        <ul class="tips-list">
+          <li class="tip-item">
+            <span class="tip-icon">🔐</span>
+            <p>استخدم 8 أحرف على الأقل تتضمن أرقاماً وحروفاً كبيرة وصغيرة</p>
+          </li>
+          <li class="tip-item">
+            <span class="tip-icon">🔄</span>
+            <p>غيّر كلمة المرور بشكل دوري كل 3 أشهر على الأقل</p>
+          </li>
+          <li class="tip-item">
+            <span class="tip-icon">🚫</span>
+            <p>لا تشارك كلمة المرور مع أحد حتى فريق الدعم الفني</p>
+          </li>
+          <li class="tip-item">
+            <span class="tip-icon">💡</span>
+            <p>تجنب استخدام معلومات شخصية واضحة كتاريخ الميلاد</p>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div>

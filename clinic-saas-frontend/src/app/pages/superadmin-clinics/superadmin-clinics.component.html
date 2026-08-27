@@ -1,0 +1,541 @@
+<div dir="rtl" class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-white font-bold text-2xl flex items-center gap-3">
+        <span>إدارة العيادات والتحكم الشامل</span>
+        <span class="text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-full font-mono font-medium">
+          {{ clinics.length }} عيادة
+        </span>
+      </h1>
+      <p class="text-slate-400 text-sm mt-1">تحكم كامل في جميع العيادات المسجلة، خطط الاشتراكات، والدخول الإداري المباشر</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <button (click)="openAddModal()"
+        class="flex items-center gap-2 bg-gradient-to-l from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-red-600/20 active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        إضافة عيادة جديدة
+      </button>
+
+      <button (click)="loadClinics()" title="تحديث القائمة"
+        class="flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 rounded-xl transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div *ngIf="successMsg"
+    class="flex items-center gap-3 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm rounded-2xl px-5 py-3.5 shadow-lg">
+    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    <span class="font-medium">{{ successMsg }}</span>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error && !isLoading"
+    class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-2xl px-5 py-3.5">
+    {{ error }}
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-wrap items-center gap-3">
+    <!-- Search -->
+    <div class="relative flex-1 min-w-[240px]">
+      <svg class="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" type="text"
+        placeholder="ابحث باسم العيادة، البريد الإلكتروني..."
+        class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl
+               pr-10 pl-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/30
+               placeholder-slate-500">
+    </div>
+
+    <!-- Plan Filter -->
+    <select [(ngModel)]="filterPlan" (change)="loadClinics()"
+      class="bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none
+             focus:ring-2 focus:ring-red-500/30 cursor-pointer">
+      <option value="all">كل خطط الاشتراك</option>
+      <option value="Basic">خطة Basic</option>
+      <option value="Pro">خطة Pro</option>
+      <option value="Enterprise">خطة Enterprise</option>
+    </select>
+
+    <!-- Status Filter -->
+    <select [(ngModel)]="filterStatus" (change)="loadClinics()"
+      class="bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none
+             focus:ring-2 focus:ring-red-500/30 cursor-pointer">
+      <option value="all">جميع الحالات</option>
+      <option value="Active">العيادات النشطة</option>
+      <option value="Inactive">العيادات المعطلة</option>
+    </select>
+
+    <button (click)="onSearch()"
+      class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-sm font-medium
+             px-5 py-2.5 rounded-xl transition-all">
+      بحث
+    </button>
+
+    <button *ngIf="searchQuery || filterPlan !== 'all' || filterStatus !== 'all'"
+      (click)="clearFilters()"
+      class="text-slate-500 hover:text-white text-sm transition-colors px-2">
+      مسح الفلاتر ✕
+    </button>
+  </div>
+
+  <!-- Table Container -->
+  <div class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="divide-y divide-white/5 animate-pulse p-6 space-y-4">
+      <div *ngFor="let s of skeletons" class="h-14 bg-white/5 rounded-2xl w-full"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && clinics.length === 0" class="py-16 text-center">
+      <div class="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-3 text-slate-500">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/>
+        </svg>
+      </div>
+      <p class="text-white font-medium text-base">لا توجد عيادات مطابقة</p>
+      <p class="text-slate-500 text-xs mt-1">جرب تغيير معايير البحث أو إضافة عيادة جديدة</p>
+    </div>
+
+    <!-- Real Clinics Table -->
+    <div *ngIf="!isLoading && clinics.length > 0" class="overflow-x-auto">
+      <table class="w-full text-right border-collapse">
+        <thead>
+          <tr class="border-b border-white/5 bg-white/[0.03] text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            <th class="py-4 px-6">العيادة</th>
+            <th class="py-4 px-4">بيانات الاتصال</th>
+            <th class="py-4 px-4 text-center">المرضى</th>
+            <th class="py-4 px-4 text-center">الأطباء</th>
+            <th class="py-4 px-4 text-center">الخطة</th>
+            <th class="py-4 px-4 text-center">الحالة</th>
+            <th class="py-4 px-6 text-center">لوحة التحكم والإجراءات</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5 text-sm">
+          <tr *ngFor="let c of clinics" class="hover:bg-white/[0.02] transition-colors group"
+              [class.opacity-50]="c.subscription_status === 'Inactive'">
+            
+            <!-- Clinic Name & Icon -->
+            <td class="py-4 px-6">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-600/10 flex-shrink-0">
+                  {{ c.name.charAt(0) }}
+                </div>
+                <div>
+                  <p class="text-white font-semibold group-hover:text-red-400 transition-colors">{{ c.name }}</p>
+                  <p class="text-slate-500 text-xs mt-0.5">معرف: #{{ c.id }} · {{ c.created_at | date:'dd/MM/yyyy' }}</p>
+                </div>
+              </div>
+            </td>
+
+            <!-- Contact info -->
+            <td class="py-4 px-4">
+              <p class="text-slate-300 text-xs">{{ c.email || '—' }}</p>
+              <p class="text-slate-500 text-xs mt-0.5 font-mono" dir="ltr">{{ c.phone || 'بدون هاتف' }}</p>
+            </td>
+
+            <!-- Patients Count -->
+            <td class="py-4 px-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-xl bg-blue-500/10 text-blue-400 font-bold text-xs">
+                {{ c.patients_count }} مريض
+              </span>
+            </td>
+
+            <!-- Doctors Count -->
+            <td class="py-4 px-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-xl bg-violet-500/10 text-violet-400 font-bold text-xs">
+                {{ c.doctors_count }} طبيب
+              </span>
+            </td>
+
+            <!-- Plan Badge -->
+            <td class="py-4 px-4 text-center">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full" [class]="getPlanBadge(c.subscription_plan)">
+                {{ c.subscription_plan }}
+              </span>
+            </td>
+
+            <!-- Status Badge -->
+            <td class="py-4 px-4 text-center">
+              <span class="text-xs font-medium px-3 py-1 rounded-full" [class]="getStatusBadge(c.subscription_status)">
+                {{ c.subscription_status === 'Active' ? 'نشطة' : 'معطلة' }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="py-4 px-6 text-center">
+              <div class="flex items-center justify-center gap-2">
+                
+                <!-- 🚀 1. IMPERSONATE: Login as Clinic Dashboard -->
+                <button (click)="loginAsClinic(c)"
+                  [disabled]="actionLoading === c.id"
+                  title="الدخول الفوري إلى لوحة تحكم العيادة كمدير"
+                  class="flex items-center gap-1.5 bg-gradient-to-l from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-all shadow-md shadow-teal-500/20 active:scale-95">
+                  <svg *ngIf="actionLoading !== c.id" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  <svg *ngIf="actionLoading === c.id" class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  <span>دخول للعيادة</span>
+                </button>
+
+                <!-- 🔍 2. View Details -->
+                <button (click)="openDetailsModal(c.id)"
+                  title="عرض تفاصيل العيادة وطاقمها"
+                  class="w-9 h-9 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-xl flex items-center justify-center transition-all border border-white/5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+
+                <!-- ✏️ 3. Edit Clinic -->
+                <button (click)="openEditModal(c)"
+                  title="تعديل بيانات العيادة / كلمة المرور / الخطة"
+                  class="w-9 h-9 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center transition-all border border-blue-500/20">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+
+                <!-- ⏸️ 4. Toggle Active/Inactive -->
+                <button (click)="toggleStatus(c)"
+                  [title]="c.subscription_status === 'Active' ? 'تعطيل / تجميد العيادة' : 'تفعيل العيادة'"
+                  class="w-9 h-9 rounded-xl flex items-center justify-center transition-all border"
+                  [class]="c.subscription_status === 'Active'
+                    ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border-amber-500/20'
+                    : 'bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 border-teal-500/20'">
+                  <svg *ngIf="c.subscription_status === 'Active'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"/>
+                  </svg>
+                  <svg *ngIf="c.subscription_status !== 'Active'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                  </svg>
+                </button>
+
+                <!-- 🗑️ 5. Delete Clinic -->
+                <button (click)="deleteClinic(c)"
+                  title="حذف العيادة نهائياً"
+                  class="w-9 h-9 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center transition-all border border-red-500/20">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ══ MODAL 1: ADD NEW CLINIC ═════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" dir="rtl">
+    <div class="bg-[#12121c] border border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-fade-in">
+      
+      <div class="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/[0.02]">
+        <div>
+          <h2 class="text-white font-bold text-lg">إضافة عيادة جديدة للمنصة</h2>
+          <p class="text-slate-400 text-xs mt-0.5">إنشاء حساب عيادة جديد مع حساب المدير المشرف عليها</p>
+        </div>
+        <button (click)="closeAddModal()" class="text-slate-400 hover:text-white p-1 rounded-xl hover:bg-white/5 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form [formGroup]="addForm" (ngSubmit)="submitAddClinic()" class="p-6 space-y-4">
+        <div *ngIf="addError" class="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3">
+          {{ addError }}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">اسم العيادة / المركز الطبي *</label>
+            <input formControlName="name" type="text" placeholder="مثال: عيادة النور التخصصية"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">اسم الطبيب أو المدير المسؤول *</label>
+            <input formControlName="owner_name" type="text" placeholder="د. أحمد علي"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">خطة الاشتراك *</label>
+            <select formControlName="subscription_plan"
+              class="w-full bg-slate-800 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+              <option value="Basic">Basic (أساسي)</option>
+              <option value="Pro">Pro (احترافي)</option>
+              <option value="Enterprise">Enterprise (شركات ومستشفيات)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">البريد الإلكتروني لتسجيل الدخول *</label>
+            <input formControlName="email" type="email" placeholder="clinic@example.com" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">كلمة المرور الافتراضية *</label>
+            <input formControlName="password" type="password" placeholder="••••••••" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">رقم الهاتف</label>
+            <input formControlName="phone" type="tel" placeholder="+966 50 000 0000" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">العنوان / المدينة</label>
+            <input formControlName="address" type="text" placeholder="الرياض، حي السليمانية"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-3">
+          <button type="button" (click)="closeAddModal()"
+            class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors">
+            إلغاء
+          </button>
+          <button type="submit" [disabled]="isAdding"
+            class="flex-1 bg-gradient-to-l from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-60 text-white text-sm font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-red-600/20 flex items-center justify-center gap-2">
+            <svg *ngIf="isAdding" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            {{ isAdding ? 'جارٍ الإنشاء...' : 'إنشاء العيادة الآن' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ══ MODAL 2: EDIT CLINIC DETAILS ═════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" dir="rtl">
+    <div class="bg-[#12121c] border border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-fade-in">
+      
+      <div class="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/[0.02]">
+        <div>
+          <h2 class="text-white font-bold text-lg">تعديل بيانات العيادة والاشتراك</h2>
+          <p class="text-slate-400 text-xs mt-0.5">تعديل إعدادات العيادة، الخطة، أو إعادة تعيين كلمة مرور المدير</p>
+        </div>
+        <button (click)="closeEditModal()" class="text-slate-400 hover:text-white p-1 rounded-xl hover:bg-white/5 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="submitEditClinic()" class="p-6 space-y-4">
+        <div *ngIf="editError" class="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3">
+          {{ editError }}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">اسم العيادة *</label>
+            <input formControlName="name" type="text"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">خطة الاشتراك *</label>
+            <select formControlName="subscription_plan"
+              class="w-full bg-slate-800 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+              <option value="Basic">Basic</option>
+              <option value="Pro">Pro</option>
+              <option value="Enterprise">Enterprise</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">حالة الاشتراك *</label>
+            <select formControlName="subscription_status"
+              class="w-full bg-slate-800 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+              <option value="Active">نشطة (Active)</option>
+              <option value="Inactive">معطلة (Inactive)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">البريد الإلكتروني *</label>
+            <input formControlName="email" type="email" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div>
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">رقم الهاتف</label>
+            <input formControlName="phone" type="tel" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-slate-400 text-xs font-medium mb-1.5 block">العنوان</label>
+            <input formControlName="address" type="text"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-red-500/40">
+          </div>
+
+          <div class="sm:col-span-2 border-t border-white/5 pt-3">
+            <label class="text-amber-400 text-xs font-medium mb-1.5 block">تعيين كلمة مرور جديدة للمدير (اختياري - اترك فارغاً إذا لم ترغب بالتغيير)</label>
+            <input formControlName="new_password" type="password" placeholder="اتركه فارغاً للحفاظ على كلمة المرور الحالية" dir="ltr"
+              class="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-amber-500/40 placeholder-slate-600">
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-3">
+          <button type="button" (click)="closeEditModal()"
+            class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors">
+            إلغاء
+          </button>
+          <button type="submit" [disabled]="isEditing"
+            class="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white text-sm font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+            <svg *ngIf="isEditing" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            {{ isEditing ? 'جارٍ الحفظ...' : 'حفظ التعديلات' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ══ MODAL 3: CLINIC DETAILS INSPECTOR ═════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="showDetailsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" dir="rtl">
+    <div class="bg-[#12121c] border border-white/10 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in max-h-[90vh] flex flex-col">
+      
+      <div class="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/[0.02]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center text-white font-bold">
+            {{ selectedClinicDetails?.clinic?.name?.charAt(0) || '🏥' }}
+          </div>
+          <div>
+            <h2 class="text-white font-bold text-lg">{{ selectedClinicDetails?.clinic?.name || 'تفاصيل العيادة' }}</h2>
+            <p class="text-slate-400 text-xs">معلومات العيادة وطاقم الأطباء والمستخدمين</p>
+          </div>
+        </div>
+        <button (click)="closeDetailsModal()" class="text-slate-400 hover:text-white p-1 rounded-xl hover:bg-white/5 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6">
+        <div *ngIf="isLoadingDetails" class="py-12 text-center text-slate-400 text-sm animate-pulse">
+          جارٍ جلب تفاصيل العيادة...
+        </div>
+
+        <ng-container *ngIf="!isLoadingDetails && selectedClinicDetails">
+          
+          <!-- Key Metrics -->
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <p class="text-2xl font-bold text-blue-400">{{ selectedClinicDetails.stats?.patients_count || 0 }}</p>
+              <p class="text-slate-400 text-xs mt-1">المرضى المسجلون</p>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <p class="text-2xl font-bold text-teal-400">{{ selectedClinicDetails.stats?.appointments_count || 0 }}</p>
+              <p class="text-slate-400 text-xs mt-1">إجمالي المواعيد</p>
+            </div>
+            <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <p class="text-2xl font-bold text-violet-400">{{ selectedClinicDetails.staff?.length || 0 }}</p>
+              <p class="text-slate-400 text-xs mt-1">طاقم العمل</p>
+            </div>
+          </div>
+
+          <!-- Clinic Info Box -->
+          <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-2 text-xs">
+            <div class="flex justify-between py-1 border-b border-white/5">
+              <span class="text-slate-400">البريد الإلكتروني:</span>
+              <span class="text-white font-mono">{{ selectedClinicDetails.clinic?.email || '—' }}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-white/5">
+              <span class="text-slate-400">رقم الهاتف:</span>
+              <span class="text-white font-mono" dir="ltr">{{ selectedClinicDetails.clinic?.phone || '—' }}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-white/5">
+              <span class="text-slate-400">العنوان:</span>
+              <span class="text-white">{{ selectedClinicDetails.clinic?.address || '—' }}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-white/5">
+              <span class="text-slate-400">الخطة والحالة:</span>
+              <span class="text-teal-400 font-semibold">{{ selectedClinicDetails.clinic?.subscription_plan }} ({{ selectedClinicDetails.clinic?.subscription_status }})</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-slate-400">تاريخ التسجيل:</span>
+              <span class="text-slate-300 font-mono">{{ selectedClinicDetails.clinic?.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+          </div>
+
+          <!-- Staff / Doctors List -->
+          <div>
+            <h3 class="text-white font-semibold text-sm mb-3">طاقم العمل والأطباء المسجلون ({{ selectedClinicDetails.staff?.length || 0 }})</h3>
+            <div class="space-y-2 max-h-48 overflow-y-auto">
+              <div *ngFor="let member of selectedClinicDetails.staff"
+                class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 text-xs">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-white">
+                    {{ member.full_name?.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="text-white font-medium">{{ member.full_name }}</p>
+                    <p class="text-slate-500">{{ member.email }}</p>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span class="px-2 py-0.5 rounded-md font-mono text-[10px]"
+                    [class]="member.role === 'ADMIN' ? 'bg-red-500/10 text-red-400' : 'bg-violet-500/10 text-violet-400'">
+                    {{ member.role === 'ADMIN' ? 'مدير العيادة' : (member.specialty || 'طبيب') }}
+                  </span>
+                </div>
+              </div>
+              <div *ngIf="selectedClinicDetails.staff?.length === 0" class="text-center py-4 text-slate-500 text-xs">
+                لا يوجد أطباء مسجلون في هذه العيادة بعد
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+      </div>
+
+      <div class="p-4 border-t border-white/5 bg-white/[0.02] flex justify-end">
+        <button (click)="closeDetailsModal()"
+          class="bg-white/10 hover:bg-white/15 text-white text-xs font-medium px-5 py-2 rounded-xl transition-colors">
+          إغلاق
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

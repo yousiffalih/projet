@@ -1,142 +1,98 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import pg from 'pg';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import verifyToken from './middlewares/authMiddleware.js';
 dotenv.config();
+
+// تشغيل الاتصال بقاعدة البيانات عند بدء الخادم
+import pool from './db/index.js';
+
+// استيراد المسارات
+import clinicRoutes from './routes/clinicRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import patientRoutes from './routes/patientRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import superAdminRoutes from './routes/superAdminRoutes.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 5001;
 
-// Middleware
+// --------- Middleware ---------
 app.use(cors());
 app.use(express.json());
 
-// Database Connection Pool
-const { Pool } = pg;
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-// Test the database connection
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error('Error acquiring client', err.stack);
-  } else {
-    console.log('Successfully connected to PostgreSQL database!');
-  }
-  if (client) release();
-});
-
-// A simple test API endpoint
+// --------- API Routes ---------
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Clinic SaaS API is running perfectly.' });
 });
 
-// Initialize database tables for clinics and users
-app.get('/api/setup', async (req, res) => {
+app.use('/api/clinics', clinicRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/patients', patientRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/superadmin', superAdminRoutes);
+
+// جلب أطباء العيادة (للاستخدام في قائمة الاختيار عند جدولة المواعيد)
+app.get('/api/doctors', verifyToken, async (req, res) => {
   try {
-    // إنشاء جدول العيادات
+    const { clinic_id } = req.user;
+    const result = await pool.query(
+      "SELECT id, full_name, role, specialty FROM users WHERE clinic_id = $1 AND role = 'DOCTOR' ORDER BY full_name ASC",
+      [clinic_id]
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب الأطباء' });
+  }
+});
+
+// تهيئة جدول المرضى (استخدم مرة واحدة فقط)
+app.get('/api/setup-patients', async (req, res) => {
+  try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS clinics (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          address TEXT,
-          subscription_plan VARCHAR(50),
-          subscription_status VARCHAR(50),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      CREATE TABLE IF NOT EXISTS patients (
+        id SERIAL PRIMARY KEY,
+        clinic_id INT NOT NULL,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255),
+        phone VARCHAR(50),
+        date_of_birth DATE,
+        gender VARCHAR(20),
+        address TEXT,
+        medical_history TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE
       );
     `);
-
-    // إنشاء جدول المستخدمين (المرتبط بالعيادة)
+    // تهيئة جدول المواعيد
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-          id SERIAL PRIMARY KEY,
-          clinic_id INT NOT NULL,
-          full_name VARCHAR(255) NOT NULL,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          password_hash VARCHAR(255) NOT NULL,
-          role VARCHAR(50) NOT NULL,
-          specialty VARCHAR(100),
-          FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE
+      CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        clinic_id INT NOT NULL,
+        patient_id INT NOT NULL,
+        doctor_id INT,
+        appointment_date DATE NOT NULL,
+        appointment_time TIME NOT NULL,
+        type VARCHAR(100) DEFAULT 'فحص عام',
+        status VARCHAR(20) DEFAULT 'pending',
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE,
+        FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+        FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE SET NULL
       );
     `);
-
-    res.status(200).json({ message: 'تم تهيئة جداول العيادات والمستخدمين بنجاح!' });
+    res.status(200).json({ message: 'تم إنشاء جداول المرضى والمواعيد بنجاح!' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'حدث خطأ أثناء تهيئة الجداول' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Route to add a new clinic
-app.post('/api/clinics', async (req, res) => {
-  try {
-    const { name, address, subscription_plan } = req.body;
-
-    if (!name) {
-      return res.status(400).json({ error: 'اسم العيادة مطلوب لتسجيل الاشتراك' });
-    }
-
-    const newClinic = await pool.query(
-      'INSERT INTO clinics (name, address, subscription_plan, subscription_status) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, address, subscription_plan || 'Basic', 'Active']
-    );
-
-    res.status(201).json({
-      message: 'تم تسجيل العيادة بنجاح',
-      clinic: newClinic.rows[0]
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'حدث خطأ في الخادم الداخلي' });
-  }
-});
-
-// Route to list all registered clinics
-app.get('/api/clinics', async (req, res) => {
-  try {
-    const allClinics = await pool.query('SELECT * FROM clinics ORDER BY created_at DESC');
-    res.status(200).json(allClinics.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'حدث خطأ أثناء جلب البيانات' });
-  }
-});
-
-// مسار تسجيل مستخدم جديد (طبيب أو موظف)
-app.post('/api/users/register', async (req, res) => {
-  try {
-    const { clinic_id, full_name, email, password, role, specialty } = req.body;
-
-    // 1. التحقق من عدم وجود المستخدم مسبقاً
-    const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (userExists.rows.length > 0) {
-      return res.status(400).json({ error: 'البريد الإلكتروني مسجل مسبقاً' });
-    }
-
-    // 2. تشفير كلمة المرور
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
-
-    // 3. حفظ المستخدم في قاعدة البيانات
-    const newUser = await pool.query(
-      'INSERT INTO users (clinic_id, full_name, email, password_hash, role, specialty) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, full_name, email, role',
-      [clinic_id, full_name, email, password_hash, role, specialty]
-    );
-
-    res.status(201).json({
-      message: 'تم تسجيل المستخدم بنجاح',
-      user: newUser.rows[0]
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'حدث خطأ أثناء تسجيل المستخدم' });
-  }
-});
-
-// Start the server
+// --------- Start Server ---------
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
