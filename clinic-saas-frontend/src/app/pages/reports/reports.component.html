@@ -1,0 +1,310 @@
+<div dir="rtl">
+
+  <!-- ══ PAGE HEADER ══ -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-white text-xl font-bold">التقارير والتحليلات</h1>
+      <p class="text-slate-400 text-sm mt-0.5">مؤشرات الأداء الكلية وإحصائيات العيادة المباشرة</p>
+    </div>
+    <button (click)="refreshData()"
+      class="flex items-center gap-2 bg-slate-900 border border-white/5 hover:border-teal-500/30 text-slate-300 hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md">
+      <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      تحديث البيانات
+    </button>
+  </div>
+
+  <!-- ══ SKELETON LOADING ══ -->
+  <div *ngIf="isLoading" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div *ngFor="let s of [1,2,3,4]" class="bg-slate-900 border border-white/5 rounded-2xl p-5 animate-pulse">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-800"></div>
+          <div class="h-4 bg-slate-800 rounded-full w-12"></div>
+        </div>
+        <div class="h-6 bg-slate-800 rounded-full w-1/2 mb-2"></div>
+        <div class="h-3 bg-slate-800/60 rounded-full w-3/4"></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-white/5 rounded-2xl h-64 animate-pulse p-6"></div>
+      <div class="bg-slate-900 border border-white/5 rounded-2xl h-64 animate-pulse p-6"></div>
+    </div>
+  </div>
+
+  <!-- ══ ERROR STATE ══ -->
+  <div *ngIf="!isLoading && loadError"
+    class="flex flex-col items-center justify-center h-64 text-center gap-4">
+    <div class="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center">
+      <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div>
+      <p class="text-red-400 font-medium text-sm">{{ loadError }}</p>
+      <button (click)="refreshData()"
+        class="mt-3 text-teal-400 hover:text-teal-300 text-xs border border-teal-500/30 px-4 py-2 rounded-lg transition-colors">
+        ↻ إعادة المحاولة
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <div *ngIf="!isLoading && !loadError && analytics" class="space-y-6">
+
+    <!-- ══ KPI CARDS GRID ══ -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+      <!-- Card 1: Total Patients -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-teal-500/20 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded-full border border-teal-500/20">
+            نشط
+          </span>
+        </div>
+        <p class="text-3xl font-bold text-white tracking-tight">{{ analytics.kpi.total_patients }}</p>
+        <p class="text-slate-400 text-xs mt-1">إجمالي المرضى المسجلين</p>
+      </div>
+
+      <!-- Card 2: Total Appointments -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-blue-500/20 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">
+            المواعيد
+          </span>
+        </div>
+        <p class="text-3xl font-bold text-white tracking-tight">{{ analytics.kpi.total_appointments }}</p>
+        <p class="text-slate-400 text-xs mt-1">إجمالي المواعيد المجدولة</p>
+      </div>
+
+      <!-- Card 3: Completion Rate -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-purple-500/20 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-11 h-11 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+            {{ analytics.kpi.completion_rate }}% إنجاز
+          </span>
+        </div>
+        <p class="text-3xl font-bold text-white tracking-tight">{{ analytics.kpi.confirmed_appointments }}</p>
+        <p class="text-slate-400 text-xs mt-1">المواعيد المؤكدة والمكتملة</p>
+      </div>
+
+      <!-- Card 4: Doctors Count -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-cyan-500/20 transition-all">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+            الطاقم
+          </span>
+        </div>
+        <p class="text-3xl font-bold text-white tracking-tight">{{ analytics.kpi.total_doctors }}</p>
+        <p class="text-slate-400 text-xs mt-1">أطباء العيادة النشطين</p>
+      </div>
+
+    </div>
+
+    <!-- ══ CHARTS ROW 1: APPOINTMENT TYPES & STATUS BREAKDOWN ══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Box 1: Appointment Types Breakdown -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-white font-semibold text-base">توزيع المواعيد حسب النوع</h2>
+              <p class="text-slate-500 text-xs mt-0.5">نسبة وتكرار كل نوع فحص في العيادة</p>
+            </div>
+            <span class="text-slate-500 text-xs font-mono">{{ analytics.by_type.length }} أنواع</span>
+          </div>
+
+          <div *ngIf="analytics.by_type.length === 0" class="text-center py-10 text-slate-500 text-xs">
+            لا توجد بيانات موعد كافية للتوزيع
+          </div>
+
+          <div class="space-y-4">
+            <div *ngFor="let item of analytics.by_type; let i = index">
+              <div class="flex justify-between items-center text-xs mb-1.5">
+                <span class="text-slate-200 font-medium flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full" [class]="getTypeBadgeColor(i)"></span>
+                  {{ item.name }}
+                </span>
+                <span class="text-slate-400 font-mono">
+                  <strong class="text-white">{{ item.count }}</strong> موعد ({{ item.percentage }}%)
+                </span>
+              </div>
+              <div class="h-2.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/5">
+                <div class="h-full bg-gradient-to-r rounded-full transition-all duration-500"
+                  [class]="getTypeBarColor(i)"
+                  [style.width.%]="item.percentage || 5"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/5 text-xs text-slate-500 flex justify-between items-center">
+          <span>أكثر الخدمات طلباً: <strong class="text-teal-400">{{ analytics.by_type[0]?.name || 'فحص عام' }}</strong></span>
+          <span>{{ analytics.kpi.total_appointments }} إجمالي المواعيد</span>
+        </div>
+      </div>
+
+      <!-- Box 2: Appointment Status Breakdown -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-white font-semibold text-base">حالات المواعيد النسبية</h2>
+              <p class="text-slate-500 text-xs mt-0.5">معدل الإنجاز مقابل المعلقة والملغاة</p>
+            </div>
+            <span class="text-teal-400 text-xs font-bold bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
+              {{ analytics.kpi.completion_rate }}% مكتمل
+            </span>
+          </div>
+
+          <div class="space-y-5">
+            <!-- Confirmed -->
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-teal-400 font-medium flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span> مواعيد مؤكدة / مكتملة
+                </span>
+                <span class="text-slate-300 font-mono">{{ analytics.kpi.confirmed_appointments }} ({{ analytics.by_status[0]?.percentage }}%)</span>
+              </div>
+              <div class="h-3 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                <div class="h-full bg-teal-400 rounded-full transition-all duration-500" [style.width.%]="analytics.by_status[0]?.percentage || 0"></div>
+              </div>
+            </div>
+
+            <!-- Pending -->
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-amber-400 font-medium flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> مواعيد معلقة بانتظار التأكيد
+                </span>
+                <span class="text-slate-300 font-mono">{{ analytics.kpi.pending_appointments }} ({{ analytics.by_status[1]?.percentage }}%)</span>
+              </div>
+              <div class="h-3 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                <div class="h-full bg-amber-400 rounded-full transition-all duration-500" [style.width.%]="analytics.by_status[1]?.percentage || 0"></div>
+              </div>
+            </div>
+
+            <!-- Cancelled -->
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-red-400 font-medium flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> مواعيد ملغاة
+                </span>
+                <span class="text-slate-300 font-mono">{{ analytics.kpi.cancelled_appointments }} ({{ analytics.by_status[2]?.percentage }}%)</span>
+              </div>
+              <div class="h-3 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                <div class="h-full bg-red-400 rounded-full transition-all duration-500" [style.width.%]="analytics.by_status[2]?.percentage || 0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-slate-500">
+          <span>المجموع الكلي: <strong class="text-white font-mono">{{ analytics.kpi.total_appointments }}</strong></span>
+          <span class="text-slate-400">تحديث فوري تلقائي</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ CHARTS ROW 2: TOP DOCTORS & MONTHLY GROWTH ══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Top Doctors -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h2 class="text-white font-semibold text-base">الأطباء الأكثر إنجازاً</h2>
+            <p class="text-slate-500 text-xs mt-0.5">ترتيب الأطباء حسب عدد المواعيد المكتملة</p>
+          </div>
+          <span class="text-xs text-slate-500">أفضل {{ analytics.top_doctors.length }}</span>
+        </div>
+
+        <div *ngIf="analytics.top_doctors.length === 0" class="text-center py-10 text-slate-500 text-xs">
+          لا يوجد مواعيد مكتملة مسندة للأطباء بعد
+        </div>
+
+        <div class="space-y-3">
+          <div *ngFor="let doc of analytics.top_doctors; let i = index"
+            class="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-white/5 hover:border-teal-500/20 transition-all">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center"
+                [class]="i === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'">
+                #{{ i + 1 }}
+              </span>
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-bold text-sm"
+                [class]="getDoctorAvatarColor(doc.full_name)">
+                {{ doc.full_name.charAt(0) }}
+              </div>
+              <div>
+                <p class="text-white font-semibold text-xs">{{ doc.full_name }}</p>
+                <p class="text-slate-500 text-[11px]">{{ doc.specialty }}</p>
+              </div>
+            </div>
+            <div class="text-left">
+              <span class="text-teal-400 font-bold text-sm block font-mono">{{ doc.completed_count }}</span>
+              <span class="text-slate-500 text-[10px]">موعد مكتمل</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Patient Growth -->
+      <div class="bg-slate-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="text-white font-semibold text-base">نمو المرضى المسجلين</h2>
+              <p class="text-slate-500 text-xs mt-0.5">عدد تسجيلات المرضى الجدد خلال الأشهر الأخيرة</p>
+            </div>
+            <span class="text-teal-400 text-xs font-mono">آخر 6 أشهر</span>
+          </div>
+
+          <div *ngIf="analytics.monthly_growth.length === 0" class="text-center py-10 text-slate-500 text-xs">
+            لا توجد بيانات تسجيل مرضى للشخصية الشهرية
+          </div>
+
+          <!-- Bar Visualizer -->
+          <div *ngIf="analytics.monthly_growth.length > 0" class="flex items-end justify-between h-44 pt-6 px-2 border-b border-white/5 gap-3">
+            <div *ngFor="let m of analytics.monthly_growth" class="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+              <span class="text-slate-300 text-xs font-mono font-bold group-hover:text-teal-400 transition-colors">{{ m.patient_count }}</span>
+              <div class="w-full bg-slate-950 rounded-t-lg overflow-hidden border border-white/5 flex items-end h-32">
+                <div class="w-full bg-gradient-to-t from-teal-600 to-teal-400 rounded-t-lg transition-all duration-500 group-hover:brightness-125"
+                  [style.height.%]="(m.patient_count / maxMonthlyCount) * 100 || 10"></div>
+              </div>
+              <span class="text-slate-500 text-[10px] truncate max-w-full font-mono">{{ m.month_label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-500 flex justify-between items-center">
+          <span>إجمالي المرضى: <strong class="text-white font-mono">{{ analytics.kpi.total_patients }}</strong></span>
+          <span>بيانات دقيقة من قاعدة البيانات</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

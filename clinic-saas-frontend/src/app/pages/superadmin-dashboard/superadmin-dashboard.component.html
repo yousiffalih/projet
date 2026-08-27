@@ -1,0 +1,229 @@
+<div dir="rtl" class="space-y-6">
+
+  <!-- Header -->
+  <div>
+    <h1 class="text-white font-bold text-xl">لوحة تحكم المنصة</h1>
+    <p class="text-slate-500 text-sm mt-0.5">نظرة عامة على جميع العيادات والإحصائيات</p>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <ng-container *ngIf="isLoading">
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div *ngFor="let s of [1,2,3,4,5,6,7,8]"
+        class="bg-white/[0.03] border border-white/5 rounded-2xl p-5 animate-pulse">
+        <div class="h-3 bg-white/5 rounded w-1/2 mb-3"></div>
+        <div class="h-8 bg-white/5 rounded w-1/3 mb-2"></div>
+        <div class="h-2 bg-white/5 rounded w-2/3"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Error -->
+  <div *ngIf="error && !isLoading"
+    class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
+    {{ error }}
+  </div>
+
+  <!-- Stats Grid -->
+  <ng-container *ngIf="stats && !isLoading">
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+
+      <!-- Total Clinics -->
+      <div class="bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/15 rounded-2xl p-5 hover:scale-[1.02] transition-transform">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-9 h-9 bg-red-500/15 rounded-xl flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <span class="text-xs bg-red-500/10 text-red-400 px-2 py-0.5 rounded-full font-medium">عيادة</span>
+        </div>
+        <p class="text-3xl font-bold text-white">{{ stats.total_clinics }}</p>
+        <p class="text-slate-400 text-xs mt-1">إجمالي العيادات</p>
+        <div class="flex gap-3 mt-2">
+          <span class="text-teal-400 text-xs">{{ stats.active_clinics }} نشطة</span>
+          <span class="text-red-400 text-xs">{{ stats.inactive_clinics }} معطلة</span>
+        </div>
+      </div>
+
+      <!-- Total Patients -->
+      <div class="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/15 rounded-2xl p-5 hover:scale-[1.02] transition-transform">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-9 h-9 bg-blue-500/15 rounded-xl flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <span class="text-xs bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-medium">مريض</span>
+        </div>
+        <p class="text-3xl font-bold text-white">{{ stats.total_patients }}</p>
+        <p class="text-slate-400 text-xs mt-1">إجمالي المرضى</p>
+        <p class="text-blue-400 text-xs mt-2">عبر كل العيادات</p>
+      </div>
+
+      <!-- Total Appointments -->
+      <div class="bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-500/15 rounded-2xl p-5 hover:scale-[1.02] transition-transform">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-9 h-9 bg-teal-500/15 rounded-xl flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs bg-teal-500/10 text-teal-400 px-2 py-0.5 rounded-full font-medium">موعد</span>
+        </div>
+        <p class="text-3xl font-bold text-white">{{ stats.total_appointments }}</p>
+        <p class="text-slate-400 text-xs mt-1">إجمالي المواعيد</p>
+        <p class="text-teal-400 text-xs mt-2">{{ stats.confirmed_appointments }} مؤكد</p>
+      </div>
+
+      <!-- Total Doctors -->
+      <div class="bg-gradient-to-br from-violet-500/10 to-transparent border border-violet-500/15 rounded-2xl p-5 hover:scale-[1.02] transition-transform">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-9 h-9 bg-violet-500/15 rounded-xl flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <span class="text-xs bg-violet-500/10 text-violet-400 px-2 py-0.5 rounded-full font-medium">طبيب</span>
+        </div>
+        <p class="text-3xl font-bold text-white">{{ stats.total_doctors }}</p>
+        <p class="text-slate-400 text-xs mt-1">الأطباء المسجلون</p>
+        <p class="text-violet-400 text-xs mt-2">عبر كل العيادات</p>
+      </div>
+    </div>
+
+    <!-- Plans Distribution -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      <!-- Subscription Plans Breakdown -->
+      <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-5">
+        <h3 class="text-white font-semibold text-sm mb-4">توزيع خطط الاشتراك</h3>
+        <div class="space-y-4">
+
+          <!-- Basic -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-slate-400 text-sm">Basic</span>
+              <span class="text-white font-medium text-sm">{{ stats.basic_plan }}</span>
+            </div>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-slate-400 rounded-full transition-all duration-700"
+                [style.width.%]="stats.total_clinics ? (stats.basic_plan / stats.total_clinics * 100) : 0"></div>
+            </div>
+          </div>
+
+          <!-- Pro -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-slate-400 text-sm">Pro</span>
+              <span class="text-white font-medium text-sm">{{ stats.pro_plan }}</span>
+            </div>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-violet-400 rounded-full transition-all duration-700"
+                [style.width.%]="stats.total_clinics ? (stats.pro_plan / stats.total_clinics * 100) : 0"></div>
+            </div>
+          </div>
+
+          <!-- Enterprise -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-slate-400 text-sm">Enterprise</span>
+              <span class="text-white font-medium text-sm">{{ stats.enterprise_plan }}</span>
+            </div>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-amber-400 rounded-full transition-all duration-700"
+                [style.width.%]="stats.total_clinics ? (stats.enterprise_plan / stats.total_clinics * 100) : 0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active vs Inactive -->
+      <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-5">
+        <h3 class="text-white font-semibold text-sm mb-4">حالة العيادات</h3>
+        <div class="flex items-center justify-center gap-8 h-32">
+          <!-- Active circle -->
+          <div class="text-center">
+            <div class="relative w-20 h-20 mx-auto mb-2">
+              <svg class="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#14b8a6" stroke-width="3"
+                  stroke-dasharray="100" [attr.stroke-dashoffset]="stats.total_clinics ? (100 - (stats.active_clinics / stats.total_clinics * 100)) : 100"
+                  stroke-linecap="round"/>
+              </svg>
+              <span class="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">
+                {{ stats.total_clinics ? (stats.active_clinics / stats.total_clinics * 100 | number:'1.0-0') : 0 }}%
+              </span>
+            </div>
+            <p class="text-teal-400 text-xs font-medium">نشطة</p>
+            <p class="text-white font-bold">{{ stats.active_clinics }}</p>
+          </div>
+          <!-- Divider -->
+          <div class="h-16 w-px bg-white/10"></div>
+          <!-- Inactive circle -->
+          <div class="text-center">
+            <div class="relative w-20 h-20 mx-auto mb-2">
+              <svg class="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f87171" stroke-width="3"
+                  stroke-dasharray="100" [attr.stroke-dashoffset]="stats.total_clinics ? (100 - (stats.inactive_clinics / stats.total_clinics * 100)) : 100"
+                  stroke-linecap="round"/>
+              </svg>
+              <span class="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">
+                {{ stats.total_clinics ? (stats.inactive_clinics / stats.total_clinics * 100 | number:'1.0-0') : 0 }}%
+              </span>
+            </div>
+            <p class="text-red-400 text-xs font-medium">معطلة</p>
+            <p class="text-white font-bold">{{ stats.inactive_clinics }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Clinics -->
+    <div class="bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+        <h3 class="text-white font-semibold text-sm">أحدث العيادات المسجلة</h3>
+        <a routerLink="/superadmin/clinics"
+          class="text-red-400 hover:text-red-300 text-xs font-medium transition-colors">
+          عرض الكل ←
+        </a>
+      </div>
+      <div class="divide-y divide-white/5">
+        <div *ngFor="let clinic of recentClinics"
+          class="flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.02] transition-colors">
+          <!-- Avatar -->
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-rose-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+            {{ clinic.name.charAt(0) }}
+          </div>
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-medium truncate">{{ clinic.name }}</p>
+            <p class="text-slate-500 text-xs">{{ clinic.patients_count }} مريض · {{ clinic.doctors_count }} طبيب</p>
+          </div>
+          <!-- Plan -->
+          <span class="text-xs font-medium px-2.5 py-1 rounded-full" [class]="getPlanBadge(clinic.subscription_plan)">
+            {{ clinic.subscription_plan }}
+          </span>
+          <!-- Status -->
+          <span class="text-xs font-medium px-2.5 py-1 rounded-full" [class]="getStatusBadge(clinic.subscription_status)">
+            {{ clinic.subscription_status === 'Active' ? 'نشطة' : 'معطلة' }}
+          </span>
+          <!-- Date -->
+          <span class="text-slate-600 text-xs hidden lg:block">
+            {{ clinic.created_at | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+        <div *ngIf="recentClinics.length === 0"
+          class="px-6 py-8 text-center text-slate-500 text-sm">
+          لا توجد عيادات مسجلة بعد
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
