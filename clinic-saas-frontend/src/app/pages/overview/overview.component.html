@@ -4,29 +4,35 @@
   <div *ngIf="user?.role === 'SUPER_ADMIN'"
     class="bg-gradient-to-l from-red-600/20 via-rose-600/20 to-transparent border border-red-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
     <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl bg-red-600/30 border border-red-500/40 flex items-center justify-center text-red-400 flex-shrink-0">
+      <div
+        class="w-11 h-11 rounded-xl bg-red-600/30 border border-red-500/40 flex items-center justify-center text-red-400 flex-shrink-0">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
       </div>
       <div>
         <h3 class="text-white font-bold text-base flex items-center gap-2">
           <span>أنت مسجل حالياً بصلاحية المشرف العام (Super Admin)</span>
-          <span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-mono font-medium">SUPER_ADMIN</span>
+          <span
+            class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-mono font-medium">SUPER_ADMIN</span>
         </h3>
-        <p class="text-slate-300 text-xs mt-0.5">يمكنك التحكم في جميع العيادات، تغيير خطط الاشتراكات، وإضافة عيادات جديدة من لوحة التحكم المركزية.</p>
+        <p class="text-slate-300 text-xs mt-0.5">يمكنك التحكم في جميع العيادات، تغيير خطط الاشتراكات، وإضافة عيادات
+          جديدة من لوحة التحكم المركزية.</p>
       </div>
     </div>
     <a routerLink="/superadmin/clinics"
       class="flex items-center gap-2 bg-gradient-to-l from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold px-5 py-3 rounded-xl shadow-lg shadow-red-600/30 transition-all active:scale-95 whitespace-nowrap">
-      <span>🚀 فتح لوحة إدارة كل العيادات</span>
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      <span> فتح لوحة إدارة كل العيادات</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
     </a>
   </div>
 
   <!-- ══ WELCOME BANNER ══ -->
-  <div class="bg-gradient-to-l from-teal-500/10 via-blue-500/10 to-transparent border border-white/5 rounded-2xl px-6 py-5 flex items-center justify-between">
+  <div
+    class="bg-gradient-to-l from-teal-500/10 via-blue-500/10 to-transparent border border-white/5 rounded-2xl px-6 py-5 flex items-center justify-between">
     <div>
       <h2 class="text-white font-semibold text-lg">أهلاً بك، {{ user?.full_name }} 👋</h2>
       <p class="text-slate-400 text-sm mt-0.5">
@@ -43,7 +49,9 @@
     </div>
     <button (click)="openNewApptModal()"
       class="hidden sm:flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-teal-500/20 active:scale-95">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
       موعد جديد
     </button>
   </div>
@@ -71,12 +79,29 @@
         [class]="stat.bg">
         <div class="flex items-start justify-between mb-4">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center" [class]="stat.bg">
-            <svg *ngIf="stat.icon==='patients'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            <svg *ngIf="stat.icon==='calendar'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <svg *ngIf="stat.icon==='doctors'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <svg *ngIf="stat.icon==='revenue'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <svg *ngIf="stat.icon==='patients'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <svg *ngIf="stat.icon==='calendar'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <svg *ngIf="stat.icon==='doctors'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <svg *ngIf="stat.icon==='revenue'" class="w-5 h-5" [class]="stat.color" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          <span class="text-xs font-medium px-2 py-1 rounded-full" [class]="stat.trendUp ? 'bg-teal-500/10 text-teal-400' : 'bg-red-500/10 text-red-400'">
+          <span class="text-xs font-medium px-2 py-1 rounded-full"
+            [class]="stat.trendUp ? 'bg-teal-500/10 text-teal-400' : 'bg-red-500/10 text-red-400'">
             {{ stat.trendUp ? '↑' : '↓' }}
           </span>
         </div>
@@ -98,7 +123,8 @@
           <h3 class="text-white font-semibold text-sm">مواعيد اليوم</h3>
           <span class="text-slate-500 text-xs font-mono">({{ todayAppointments.length }})</span>
         </div>
-        <a routerLink="/dashboard/appointments" class="text-teal-400 hover:text-teal-300 text-xs font-medium transition-colors">
+        <a routerLink="/dashboard/appointments"
+          class="text-teal-400 hover:text-teal-300 text-xs font-medium transition-colors">
           عرض كل المواعيد ←
         </a>
       </div>
@@ -121,7 +147,8 @@
         class="flex flex-col items-center justify-center py-12 text-center">
         <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center mb-3">
           <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
         <p class="text-slate-400 text-sm font-medium">لا توجد مواعيد مجدولة اليوم</p>
@@ -134,8 +161,10 @@
 
       <!-- Real Data -->
       <div *ngIf="!isStatsLoading && todayAppointments.length > 0" class="divide-y divide-white/5">
-        <div *ngFor="let appt of todayAppointments" class="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors">
-          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+        <div *ngFor="let appt of todayAppointments"
+          class="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors">
+          <div
+            class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
             {{ getAvatar(appt.patient_name) }}
           </div>
           <div class="flex-1 min-w-0">
@@ -148,7 +177,8 @@
           <p class="text-white text-sm font-mono flex-shrink-0">
             {{ (appt.appointment_time || '').slice(0,5) }}
           </p>
-          <span class="text-xs font-medium px-3 py-1 rounded-full flex-shrink-0" [class]="getStatusClass(appt.status || '')">
+          <span class="text-xs font-medium px-3 py-1 rounded-full flex-shrink-0"
+            [class]="getStatusClass(appt.status || '')">
             {{ getStatusLabel(appt.status || '') }}
           </span>
         </div>
@@ -168,7 +198,8 @@
               <span class="text-teal-400">{{ confirmedPct }}%</span>
             </div>
             <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-l from-teal-400 to-blue-500 rounded-full transition-all duration-700" [style.width.%]="confirmedPct"></div>
+              <div class="h-full bg-gradient-to-l from-teal-400 to-blue-500 rounded-full transition-all duration-700"
+                [style.width.%]="confirmedPct"></div>
             </div>
           </div>
           <div>
@@ -177,7 +208,8 @@
               <span class="text-amber-400">{{ pendingPct }}%</span>
             </div>
             <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-amber-400 rounded-full transition-all duration-700" [style.width.%]="pendingPct"></div>
+              <div class="h-full bg-amber-400 rounded-full transition-all duration-700" [style.width.%]="pendingPct">
+              </div>
             </div>
           </div>
           <div>
@@ -186,7 +218,8 @@
               <span class="text-red-400">{{ cancelledPct }}%</span>
             </div>
             <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-red-400 rounded-full transition-all duration-700" [style.width.%]="cancelledPct"></div>
+              <div class="h-full bg-red-400 rounded-full transition-all duration-700" [style.width.%]="cancelledPct">
+              </div>
             </div>
           </div>
         </div>
@@ -198,7 +231,8 @@
         <div class="space-y-2">
           <button (click)="openNewPatientModal()"
             class="w-full flex items-center gap-3 text-slate-300 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all text-right">
-            <span class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm">+</span>
+            <span
+              class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-sm">+</span>
             إضافة مريض جديد
           </button>
           <button (click)="openNewApptModal()"
@@ -219,21 +253,24 @@
 
   <!-- ══ QUICK SCHEDULE APPOINTMENT MODAL ══ -->
   <div *ngIf="showApptModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-    dir="rtl">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" dir="rtl">
     <div class="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in">
       <div class="flex items-center justify-between px-6 py-5 border-b border-white/5">
         <div>
           <h2 class="text-white font-semibold text-base">جدولة موعد جديد</h2>
           <p class="text-slate-500 text-xs mt-0.5">أضف موعداً لمريض في العيادة</p>
         </div>
-        <button (click)="closeApptModal()" class="text-slate-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button (click)="closeApptModal()"
+          class="text-slate-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
       <form [formGroup]="apptForm" (ngSubmit)="submitAppt()" class="px-6 py-5 space-y-4">
-        <div *ngIf="modalError" class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
+        <div *ngIf="modalError"
+          class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
           {{ modalError }}
         </div>
 
@@ -243,9 +280,11 @@
           <select formControlName="patient_id"
             class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
             <option value="">-- اختر مريضاً --</option>
-            <option *ngFor="let p of patients" [value]="p.id">{{ p.full_name }}{{ p.phone ? ' (' + p.phone + ')' : '' }}</option>
+            <option *ngFor="let p of patients" [value]="p.id">{{ p.full_name }}{{ p.phone ? ' (' + p.phone + ')' : '' }}
+            </option>
           </select>
-          <p *ngIf="apptForm.get('patient_id')!.touched && apptForm.get('patient_id')!.invalid" class="text-red-400 text-xs mt-1">المريض مطلوب</p>
+          <p *ngIf="apptForm.get('patient_id')!.touched && apptForm.get('patient_id')!.invalid"
+            class="text-red-400 text-xs mt-1">المريض مطلوب</p>
         </div>
 
         <!-- Doctor -->
@@ -254,7 +293,8 @@
           <select formControlName="doctor_id"
             class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
             <option value="">-- اختر طبيباً (اختياري) --</option>
-            <option *ngFor="let d of doctors" [value]="d.id">{{ d.full_name }}{{ d.specialty ? ' — ' + d.specialty : '' }}</option>
+            <option *ngFor="let d of doctors" [value]="d.id">{{ d.full_name }}{{ d.specialty ? ' — ' + d.specialty : ''
+              }}</option>
           </select>
         </div>
 
@@ -264,13 +304,15 @@
             <label class="text-slate-400 text-xs mb-1.5 block">التاريخ *</label>
             <input formControlName="appointment_date" type="date"
               class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
-            <p *ngIf="apptForm.get('appointment_date')!.touched && apptForm.get('appointment_date')!.invalid" class="text-red-400 text-xs mt-1">التاريخ مطلوب</p>
+            <p *ngIf="apptForm.get('appointment_date')!.touched && apptForm.get('appointment_date')!.invalid"
+              class="text-red-400 text-xs mt-1">التاريخ مطلوب</p>
           </div>
           <div>
             <label class="text-slate-400 text-xs mb-1.5 block">الوقت *</label>
             <input formControlName="appointment_time" type="time"
               class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
-            <p *ngIf="apptForm.get('appointment_time')!.touched && apptForm.get('appointment_time')!.invalid" class="text-red-400 text-xs mt-1">الوقت مطلوب</p>
+            <p *ngIf="apptForm.get('appointment_time')!.touched && apptForm.get('appointment_time')!.invalid"
+              class="text-red-400 text-xs mt-1">الوقت مطلوب</p>
           </div>
         </div>
 
@@ -315,21 +357,24 @@
 
   <!-- ══ QUICK ADD PATIENT MODAL ══ -->
   <div *ngIf="showPatientModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-    dir="rtl">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" dir="rtl">
     <div class="bg-slate-900 border border-white/10 rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in">
       <div class="flex items-center justify-between px-6 py-5 border-b border-white/5">
         <div>
           <h2 class="text-white font-semibold text-base">إضافة مريض جديد</h2>
           <p class="text-slate-500 text-xs mt-0.5">تسجيل مريض جديد في قاعدة بيانات العيادة</p>
         </div>
-        <button (click)="closePatientModal()" class="text-slate-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button (click)="closePatientModal()"
+          class="text-slate-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
 
       <form [formGroup]="patientForm" (ngSubmit)="submitPatient()" class="px-6 py-5 space-y-4">
-        <div *ngIf="modalError" class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
+        <div *ngIf="modalError"
+          class="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
           {{ modalError }}
         </div>
 
@@ -338,12 +383,14 @@
             <label class="text-slate-400 text-xs mb-1.5 block">الاسم الكامل *</label>
             <input formControlName="full_name" type="text" placeholder="محمد أحمد"
               class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40 placeholder-slate-600">
-            <p *ngIf="patientForm.get('full_name')!.touched && patientForm.get('full_name')!.invalid" class="text-red-400 text-xs mt-1">الاسم مطلوب</p>
+            <p *ngIf="patientForm.get('full_name')!.touched && patientForm.get('full_name')!.invalid"
+              class="text-red-400 text-xs mt-1">الاسم مطلوب</p>
           </div>
           <div>
             <label class="text-slate-400 text-xs mb-1.5 block">رقم الهاتف</label>
             <input formControlName="phone" type="tel" placeholder="0555000000"
-              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40 placeholder-slate-600" dir="ltr">
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40 placeholder-slate-600"
+              dir="ltr">
           </div>
           <div>
             <label class="text-slate-400 text-xs mb-1.5 block">الجنس</label>

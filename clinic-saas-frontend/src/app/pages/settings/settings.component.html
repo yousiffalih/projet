@@ -31,6 +31,13 @@
       </svg>
       <span>كلمة المرور</span>
     </button>
+    <button class="tab-btn" [class.active]="activeTab === 'availability'" (click)="setTab('availability')">
+      <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+      <span>أوقات العمل والتوفر</span>
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════
@@ -452,6 +459,112 @@
             <p>تجنب استخدام معلومات شخصية واضحة كتاريخ الميلاد</p>
           </li>
         </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TAB 4 — أوقات العمل والتوفر
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'availability'" class="tab-content">
+    <div class="content-grid">
+      
+      <!-- Availability Form Card -->
+      <div class="card form-card">
+        <div class="card-header">
+          <h2 class="card-title">جدول وساعات الدوام الرسمي</h2>
+          <p class="card-desc">حدد أيام العمل، مواعيد بداية ونهاية الدوام، ومدة الكشف لكل مريض</p>
+        </div>
+
+        <div *ngIf="availabilitySuccess" class="alert alert-success">
+          <span>✓</span> {{ availabilitySuccess }}
+        </div>
+        <div *ngIf="availabilityError" class="alert alert-error">
+          <span>⚠️</span> {{ availabilityError }}
+        </div>
+
+        <div class="settings-form space-y-6">
+
+          <!-- 1. Working Days Checkboxes -->
+          <div>
+            <label class="field-label block mb-3 font-bold text-white">أيام العمل الأسبوعية (اختر الأيام النشطة)</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button *ngFor="let day of weekDays"
+                type="button"
+                (click)="toggleWorkingDay(day.code)"
+                [class]="isDayWorking(day.code) 
+                  ? 'bg-teal-500/20 text-teal-300 border-teal-500/40 font-bold' 
+                  : 'bg-slate-800/40 text-slate-500 border-white/5 opacity-60'"
+                class="px-3 py-2.5 rounded-xl border text-xs text-center transition-all flex items-center justify-center gap-2">
+                <span>{{ isDayWorking(day.code) ? '✅' : '⚪' }}</span>
+                <span>{{ day.label }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Shift Hours -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="field-label">وقت بداية الدوام *</label>
+              <input type="time" [(ngModel)]="availabilityConfig.start_time" class="form-input">
+            </div>
+            <div>
+              <label class="field-label">وقت نهاية الدوام *</label>
+              <input type="time" [(ngModel)]="availabilityConfig.end_time" class="form-input">
+            </div>
+          </div>
+
+          <!-- 3. Slot Duration -->
+          <div class="pt-2">
+            <label class="field-label">مدة الكشف / الموعد لكل مريض *</label>
+            <select [(ngModel)]="availabilityConfig.slot_duration" class="form-input">
+              <option [ngValue]="15">15 دقيقة</option>
+              <option [ngValue]="30">30 دقيقة (موصى به)</option>
+              <option [ngValue]="45">45 دقيقة</option>
+              <option [ngValue]="60">60 دقيقة (ساعة كاملة)</option>
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <div class="form-actions pt-4">
+            <button (click)="saveAvailability()" [disabled]="isSavingAvailability" class="btn-primary">
+              <svg *ngIf="isSavingAvailability" class="spinner" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+              <span>{{ isSavingAvailability ? 'جاري الحفظ...' : 'حفظ مواعيد التوفر' }}</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Info Side Card -->
+      <div class="card info-card">
+        <div class="card-header">
+          <h2 class="card-title">كيف يعمل جدول التوفر؟</h2>
+        </div>
+        <div class="space-y-3 text-xs text-slate-300">
+          <p class="leading-relaxed">
+            عند قيام المريض بالحجز عبر صفحة العيادة العامة أونلاين:
+          </p>
+          <ul class="space-y-2 text-slate-400">
+            <li class="flex items-start gap-2">
+              <span class="text-teal-400">🔹</span>
+              <span>يقوم النظام بتوليد الساعات المتاحة تلقائياً وفقاً لدوامك (من {{ availabilityConfig.start_time }} إلى {{ availabilityConfig.end_time }}).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-400">🔹</span>
+              <span>تُقسَّم المواعيد بناءً على المدة التي اخترتها (كل {{ availabilityConfig.slot_duration }} دقيقة).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-400">🔹</span>
+              <span>في الأيام غير المحددة، يُحظر الحجز ويظهر للمريض إشعار بأن العيادة في إجازة.</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
     </div>

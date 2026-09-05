@@ -1,0 +1,584 @@
+<div class="min-h-screen bg-[#07070c] text-white selection:bg-teal-500 selection:text-black font-sans relative overflow-x-hidden" dir="rtl">
+
+  <!-- Glow Backgrounds -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[650px] bg-teal-500/10 rounded-full blur-[140px]"></div>
+    <div class="absolute top-1/3 -left-40 w-[550px] h-[550px] bg-blue-600/10 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-1/4 right-10 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px]"></div>
+    <!-- Grid overlay -->
+    <div class="absolute inset-0 opacity-[0.02]"
+      style="background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+             linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+             background-size: 50px 50px;">
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ══ NAVBAR ═══════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#07070c]/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a routerLink="/" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center shadow-lg shadow-teal-500/25 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 text-slate-950 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
+            ClinicSaaS
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-medium">المنصة السحابية للعيادات</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a routerLink="/find-doctor" class="text-teal-400 hover:text-teal-300 font-semibold transition-colors flex items-center gap-1">
+          <span>🔍</span> ابحث عن طبيب
+        </a>
+        <a href="#features" class="hover:text-teal-400 transition-colors">المميزات</a>
+        <a href="#preview" class="hover:text-teal-400 transition-colors">واجهة العمل</a>
+        <a href="#pricing" class="hover:text-teal-400 transition-colors">الأسعار والباقات</a>
+        <a href="#testimonials" class="hover:text-teal-400 transition-colors">آراء العملاء</a>
+        <a href="#faq" class="hover:text-teal-400 transition-colors">الأسئلة الشائعة</a>
+      </nav>
+
+      <!-- Auth Actions -->
+      <div class="flex items-center gap-3">
+        <a routerLink="/login"
+          class="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-xl hover:bg-white/5 transition-all">
+          تسجيل الدخول
+        </a>
+        <a routerLink="/register"
+          class="flex items-center gap-2 bg-gradient-to-l from-teal-400 to-blue-500 hover:from-teal-300 hover:to-blue-400 text-slate-950 text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-teal-500/35 active:scale-95 transition-all">
+          <span>ابدأ مجاناً</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="pt-28 relative z-10">
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ HERO SECTION ═════════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 text-center">
+      
+      <!-- Pill Badge -->
+      <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20 mb-8 animate-fade-in">
+        <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-teal-300">المنظومة السحابية الطبية المتكاملة #1</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.2] max-w-4xl mx-auto mb-6">
+        أدِر عيادتك الطبية بذكاء،
+        <span class="bg-clip-text text-transparent bg-gradient-to-l from-teal-400 via-emerald-300 to-blue-400">
+          وسلاسة تفوق التوقعات
+        </span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-slate-400 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
+        حل سحابي شامل مصمم خصيصاً للعيادات والمراكز الصحية: جدولة مواعيد ذكية، إدارة ملفات المرضى، تنظيم طاقم الأطباء، وتحليلات أداء فورية.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a routerLink="/register"
+          class="w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-l from-teal-400 via-teal-300 to-blue-500 hover:from-teal-300 hover:to-blue-400 text-slate-950 font-extrabold text-base px-8 py-4 rounded-2xl shadow-xl shadow-teal-500/20 hover:shadow-teal-500/30 active:scale-95 transition-all">
+          <span>ابدأ تجربتك المجانية (14 يوماً)</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+        </a>
+        <a href="#preview"
+          class="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-base px-7 py-4 rounded-2xl transition-all">
+          <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>استعراض واجهة النظام</span>
+        </a>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="flex flex-wrap items-center justify-center gap-8 text-xs font-medium text-slate-400 border-t border-white/5 pt-8 max-w-3xl mx-auto">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>بدون حاجة لبطاقة دفع للبدء</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>تشفير بيانات بمعايير صحية عالمية</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>إلغاء الاشتراك في أي وقت</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ DASHBOARD PREVIEW MOCKUP ═════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section id="preview" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
+      <div class="relative rounded-3xl p-2 bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/10 shadow-2xl shadow-teal-500/10">
+        
+        <!-- Mac Window Bar -->
+        <div class="bg-[#0f1019] rounded-2xl border border-white/5 overflow-hidden">
+          <div class="px-5 py-3.5 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+            </div>
+            <div class="bg-white/5 border border-white/5 px-4 py-1 rounded-full text-xs text-slate-400 font-mono">
+              https://app.cliniksaas.com/dashboard/overview
+            </div>
+            <div class="text-xs text-teal-400 font-semibold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+              متصل ومباشر
+            </div>
+          </div>
+
+          <!-- Inside Mockup UI -->
+          <div class="p-6 sm:p-8 bg-[#0a0b12] space-y-6">
+            
+            <!-- KPIs Row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4">
+                <p class="text-xs text-slate-400">إجمالي المرضى</p>
+                <p class="text-2xl sm:text-3xl font-bold text-white mt-1">1,248</p>
+                <p class="text-[11px] text-blue-400 mt-2 font-medium">↑ +14% هذا الشهر</p>
+              </div>
+              <div class="bg-teal-500/10 border border-teal-500/20 rounded-2xl p-4">
+                <p class="text-xs text-slate-400">مواعيد اليوم</p>
+                <p class="text-2xl sm:text-3xl font-bold text-white mt-1">28</p>
+                <p class="text-[11px] text-teal-400 mt-2 font-medium">24 موعد مؤكد</p>
+              </div>
+              <div class="bg-violet-500/10 border border-violet-500/20 rounded-2xl p-4">
+                <p class="text-xs text-slate-400">الأطباء النشطون</p>
+                <p class="text-2xl sm:text-3xl font-bold text-white mt-1">8</p>
+                <p class="text-[11px] text-violet-400 mt-2 font-medium">طاقم طبي متكامل</p>
+              </div>
+              <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4">
+                <p class="text-xs text-slate-400">نسبة الإنجاز</p>
+                <p class="text-2xl sm:text-3xl font-bold text-white mt-1">94.8%</p>
+                <p class="text-[11px] text-amber-400 mt-2 font-medium">ممتاز ومستقر</p>
+              </div>
+            </div>
+
+            <!-- Appointments Mini Table Mock -->
+            <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-semibold text-white">جدول مواعيد اليوم الحية</h4>
+                <span class="text-xs text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded-full">محدث تلقائياً</span>
+              </div>
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-300 font-bold flex items-center justify-center">ع</div>
+                    <div>
+                      <p class="text-white font-medium">عبدالله الشمري</p>
+                      <p class="text-slate-500 text-[11px]">فحص دوري · د. سارة</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono text-slate-400">10:30 ص</span>
+                    <span class="px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 font-medium">مؤكد</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-300 font-bold flex items-center justify-center">م</div>
+                    <div>
+                      <p class="text-white font-medium">مريم القحطاني</p>
+                      <p class="text-slate-500 text-[11px]">استشارة طبية · د. خالد</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono text-slate-400">11:15 ص</span>
+                    <span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">معلق</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ CORE FEATURES SECTION ════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-bold text-teal-400 tracking-wider uppercase mb-3">مميزات لا غنى عنها</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-white">كل ما تحتاجه لإدارة عيادتك بأعلى كفاءة</p>
+        <p class="text-slate-400 text-sm sm:text-base mt-4">صممنا كل أداة لتختصر وقتك ووقت طاقمك، ولتوفر تجربة مريحة لمرضاك.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Feature 1 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-teal-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">جدولة مواعيد ذكية</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">تقويم تفاعلي وجدولة سريعة تمنع تداخل المواعيد وتتيح تغيير الحالة (مؤكد، معلق، ملغي) بنقرة زر.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-blue-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">ملف رقمي شامل للمريض</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">سجل إلكتروني لكل مريض يضم بيانات الاتصال، التاريخ الصحي، الزيارات السابقة والملاحظات الطبية.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-violet-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">إدارة طاقم الأطباء</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">إضافة الأطباء، تخصيص التخصصات، وتوزيع المواعيد على العيادات والأطباء بكل مرونة.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-amber-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">تقارير وتحليلات فورية</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">مؤشرات أداء واضحة ومخططات بيانية لنسبة الحضور والإنجاز ونمو العيادة لمساعدتك في اتخاذ القرارات.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-rose-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">عزل وأمان فائق للبيانات</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">هيكل Multi-Tenant يضمن عزل بيانات كل عيادة وتشفيرها مع نسخ احتياطي سحابي دائم.</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-emerald-500/30 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">استجابة لجميع الأجهزة</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">تحكم بعيادتك من أي مكان، سواء عبر الحاسوب أو الأجهزة اللوحية أو الهواتف الذكية بسلاسة تامة.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ PRICING SECTION ══════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section id="pricing" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-white/5">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-bold text-teal-400 tracking-wider uppercase mb-3">باقات واضحة وشفافة</h2>
+        <p class="text-3xl sm:text-5xl font-extrabold text-white">اختر الخطة المناسبة لحجم عيادتك</p>
+        <p class="text-slate-400 text-sm sm:text-base mt-4">جميع الباقات تشمل فترة تجريبية مجانية لمدة 14 يوماً بدون أي التزام مالي مسبق.</p>
+
+        <!-- Monthly / Annual Toggle -->
+        <div class="flex items-center justify-center gap-3 mt-8">
+          <button (click)="toggleBilling(false)"
+            [class]="!isAnnual ? 'bg-teal-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'"
+            class="px-5 py-2 rounded-xl text-sm transition-all">
+            الدفع الشهري
+          </button>
+          <button (click)="toggleBilling(true)"
+            [class]="isAnnual ? 'bg-teal-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'"
+            class="px-5 py-2 rounded-xl text-sm transition-all flex items-center gap-2">
+            <span>الدفع السنوي</span>
+            <span class="text-[10px] bg-emerald-400 text-slate-950 px-2 py-0.5 rounded-full font-bold">خصم 20%</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pricing Cards Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+
+        <!-- PLAN 1: BASIC -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-white">الخطة الأساسية (Basic)</h3>
+            </div>
+            <p class="text-slate-400 text-xs mb-6">مثالية للعيادات الفردية الصغيرة والأطباء المبتدئين.</p>
+            
+            <div class="flex items-baseline gap-2 mb-8">
+              <span class="text-4xl sm:text-5xl font-extrabold text-white">
+                {{ isAnnual ? '$24' : '$29' }}
+              </span>
+              <span class="text-slate-400 text-xs">/ شهرياً</span>
+            </div>
+
+            <!-- Features list -->
+            <ul class="space-y-3.5 text-xs text-slate-300 border-t border-white/5 pt-6">
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>طبيب واحد (1 Doctor)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>حتى 500 ملف مريض</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>جدولة المواعيد وتأكيد الحجوزات</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>دعم فني عبر البريد الإلكتروني</span>
+              </li>
+            </ul>
+          </div>
+
+          <a routerLink="/register" [queryParams]="{ plan: 'Basic' }"
+            class="mt-8 block w-full text-center bg-white/5 hover:bg-white/10 text-white font-bold text-sm py-3.5 rounded-2xl border border-white/10 transition-all">
+            اختر الخطة الأساسية
+          </a>
+        </div>
+
+        <!-- PLAN 2: PRO (POPULAR) -->
+        <div class="relative p-8 rounded-3xl bg-gradient-to-b from-teal-500/10 via-white/[0.03] to-transparent border-2 border-teal-400/50 flex flex-col justify-between shadow-2xl shadow-teal-500/15">
+          
+          <!-- Popular Badge -->
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-l from-teal-400 to-blue-500 text-slate-950 font-extrabold text-xs px-4 py-1.5 rounded-full shadow-lg">
+            الأكثر طلباً واختياراً ⭐
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-teal-300">الخطة الاحترافية (Pro)</h3>
+            </div>
+            <p class="text-slate-400 text-xs mb-6">للعيادات والمراكز المتنامية التي تحتاج كفاءة وسرعة أعلى.</p>
+            
+            <div class="flex items-baseline gap-2 mb-8">
+              <span class="text-4xl sm:text-5xl font-extrabold text-white">
+                {{ isAnnual ? '$64' : '$79' }}
+              </span>
+              <span class="text-slate-400 text-xs">/ شهرياً</span>
+            </div>
+
+            <!-- Features list -->
+            <ul class="space-y-3.5 text-xs text-slate-200 border-t border-white/10 pt-6">
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span class="font-semibold text-white">حتى 5 أطباء (5 Doctors)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span class="font-semibold text-white">عدد غير محدود من المرضى</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>تقارير وتحليلات أداء متقدمة</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>دعم فني أولوي سريع (Priority Support)</span>
+              </li>
+            </ul>
+          </div>
+
+          <a routerLink="/register" [queryParams]="{ plan: 'Pro' }"
+            class="mt-8 block w-full text-center bg-gradient-to-l from-teal-400 to-blue-500 hover:from-teal-300 hover:to-blue-400 text-slate-950 font-extrabold text-sm py-3.5 rounded-2xl shadow-lg shadow-teal-500/25 active:scale-95 transition-all">
+            ابدأ تجربة Pro مجاناً
+          </a>
+        </div>
+
+        <!-- PLAN 3: ENTERPRISE -->
+        <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-white">خطة المؤسسات (Enterprise)</h3>
+            </div>
+            <p class="text-slate-400 text-xs mb-6">للمجمعات الطبية الكبرى والمستشفيات التخصصية.</p>
+            
+            <div class="flex items-baseline gap-2 mb-8">
+              <span class="text-4xl sm:text-5xl font-extrabold text-white">
+                {{ isAnnual ? '$159' : '$199' }}
+              </span>
+              <span class="text-slate-400 text-xs">/ شهرياً</span>
+            </div>
+
+            <!-- Features list -->
+            <ul class="space-y-3.5 text-xs text-slate-300 border-t border-white/5 pt-6">
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>أطباء ومستخدمين غير محدود</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>إدارة فروع متعددة تحت حساب واحد</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>مدير حساب مخصص وتدريب للطاقم</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-teal-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>تكامل برمجي مخصص (Custom API)</span>
+              </li>
+            </ul>
+          </div>
+
+          <a routerLink="/register" [queryParams]="{ plan: 'Enterprise' }"
+            class="mt-8 block w-full text-center bg-white/5 hover:bg-white/10 text-white font-bold text-sm py-3.5 rounded-2xl border border-white/10 transition-all">
+            اختر خطة Enterprise
+          </a>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ TESTIMONIALS SECTION ═════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section id="testimonials" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-bold text-teal-400 tracking-wider uppercase mb-3">تجارب حقيقية</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-white">ماذا يقول الأطباء عن ClinicSaaS؟</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div *ngFor="let t of testimonials"
+          class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col justify-between">
+          <div>
+            <!-- Stars -->
+            <div class="flex gap-1 text-amber-400 mb-5">
+              <span *ngFor="let s of [1,2,3,4,5]">★</span>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">"{{ t.comment }}"</p>
+          </div>
+          <div class="flex items-center gap-3 pt-4 border-t border-white/5">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-400 to-blue-500 text-slate-950 font-bold flex items-center justify-center">
+              {{ t.avatar }}
+            </div>
+            <div>
+              <p class="text-white text-sm font-bold">{{ t.name }}</p>
+              <p class="text-slate-500 text-xs">{{ t.role }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ FAQ ACCORDION ════════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section id="faq" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      
+      <div class="text-center mb-12">
+        <h2 class="text-xs font-bold text-teal-400 tracking-wider uppercase mb-3">الأسئلة الشائعة</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-white">كل ما ترغب بمعرفته</p>
+      </div>
+
+      <div class="space-y-4">
+        <div *ngFor="let faq of faqs; let i = index"
+          class="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden transition-all">
+          <button (click)="toggleFaq(i)"
+            class="w-full px-6 py-5 text-right font-semibold text-white text-sm sm:text-base flex items-center justify-between gap-4">
+            <span>{{ faq.q }}</span>
+            <svg class="w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0"
+              [class.rotate-180]="openFaqIndex === i"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div *ngIf="openFaqIndex === i" class="px-6 pb-5 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-3">
+            {{ faq.a }}
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ FINAL CTA BANNER ═════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="rounded-3xl p-8 sm:p-14 bg-gradient-to-l from-teal-500/20 via-blue-600/20 to-transparent border border-teal-500/30 text-center relative overflow-hidden shadow-2xl">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4">
+          جاهز لنقل عيادتك إلى العصر الرقمي؟
+        </h2>
+        <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-8">
+          انضم اليوم إلى مئات الأطباء وابدأ إدارة مواعيدك ومرضاك باحترافية وسهولة مطلقة.
+        </p>
+        <a routerLink="/register"
+          class="inline-flex items-center gap-3 bg-gradient-to-l from-teal-400 to-blue-400 hover:from-teal-300 hover:to-blue-300 text-slate-950 font-extrabold text-base px-9 py-4 rounded-2xl shadow-xl shadow-teal-500/25 active:scale-95 transition-all">
+          <span>سجل عيادتك الآن مجاناً</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- ══ FOOTER ═══════════════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <footer class="border-t border-white/5 bg-[#050508] py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center">
+            <svg class="w-4 h-4 text-slate-950 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <span class="text-white font-bold text-sm">ClinicSaaS © 2026 — جميع الحقوق محفوظة</span>
+        </div>
+
+        <div class="flex items-center gap-6 text-xs text-slate-500">
+          <a routerLink="/login" class="hover:text-slate-300 transition-colors">دخول العيادات</a>
+          <a routerLink="/superadmin/login" class="hover:text-red-400 transition-colors">لوحة المشرف العام</a>
+          <a href="#privacy" class="hover:text-slate-300 transition-colors">سياسة الخصوصية</a>
+          <a href="#terms" class="hover:text-slate-300 transition-colors">الشروط والأحكام</a>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+</div>

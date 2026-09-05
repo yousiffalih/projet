@@ -5,7 +5,7 @@ import pool from '../db/index.js';
 // منطق تسجيل عيادة جديدة مع مستخدم مدير (Admin) وتوليد التوكن مباشرة
 export const registerClinic = async (req, res) => {
   try {
-    const { clinic_name, full_name, email, password, phone, address } = req.body;
+    const { clinic_name, full_name, email, password, phone, address, subscription_plan } = req.body;
 
     if (!clinic_name || !clinic_name.trim()) {
       return res.status(400).json({ error: 'اسم العيادة مطلوب' });
@@ -28,12 +28,14 @@ export const registerClinic = async (req, res) => {
       return res.status(400).json({ error: 'البريد الإلكتروني مسجل مسبقاً' });
     }
 
+    const validPlan = ['Basic', 'Pro', 'Enterprise'].includes(subscription_plan) ? subscription_plan : 'Basic';
+
     // 2. إنشاء سجل العيادة
     const clinicResult = await pool.query(
       `INSERT INTO clinics (name, address, phone, email, subscription_plan, subscription_status)
-       VALUES ($1, $2, $3, $4, 'Basic', 'Active')
+       VALUES ($1, $2, $3, $4, $5, 'Active')
        RETURNING id, name, address, phone, email, subscription_plan, subscription_status, created_at`,
-      [clinic_name.trim(), address?.trim() || null, phone?.trim() || null, cleanEmail]
+      [clinic_name.trim(), address?.trim() || null, phone?.trim() || null, cleanEmail, validPlan]
     );
     const newClinic = clinicResult.rows[0];
 
@@ -121,7 +123,17 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
     }
 
-    // 3. توليد توكن الدخول (JWT)
+    // 3. إذا كان المستخدم ينتمي لعيادة، نتحقق من حالة اشتراك العيادة
+    if (user.clinic_id && user.role !== 'SUPER_ADMIN') {
+      const clinicRes = await pool.query('SELECT subscription_status, name FROM clinics WHERE id = $1', [user.clinic_id]);
+      if (clinicRes.rows.length > 0 && clinicRes.rows[0].subscription_status === 'Inactive') {
+        return res.status(403).json({
+          error: `تم إيقاف حساب عيادة "${clinicRes.rows[0].name}" مؤقتاً من قِبل إدارة المنصة. يرجى التواصل مع الدعم الفني لإعادة التفعيل.`
+        });
+      }
+    }
+
+    // 4. توليد توكن الدخول (JWT)
     // لاحظ أننا نضع clinic_id داخل التوكن لمعرفة العيادة التي ينتمي إليها
     const token = jwt.sign(
       { id: user.id, clinic_id: user.clinic_id, role: user.role },
@@ -129,13 +141,14 @@ export const loginUser = async (req, res) => {
       { expiresIn: '7d' } // صلاحية التوكن 7 أيام
     );
 
-    // 4. إرسال الاستجابة بنجاح
+    // 5. إرسال الاستجابة بنجاح
     res.status(200).json({
       message: 'تم تسجيل الدخول بنجاح',
       token: token,
       user: {
         id: user.id,
         full_name: user.full_name,
+        email: user.email,
         role: user.role,
         clinic_id: user.clinic_id
       }

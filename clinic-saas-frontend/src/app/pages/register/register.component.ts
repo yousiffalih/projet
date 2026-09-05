@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -12,16 +12,19 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  selectedPlan = 'Basic';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.registerForm = this.fb.group({
       clinic_name: ['', [Validators.required, Validators.minLength(3)]],
@@ -29,7 +32,19 @@ export class RegisterComponent {
       email:       ['', [Validators.required, Validators.email]],
       password:    ['', [Validators.required, Validators.minLength(6)]],
       phone:       [''],
-      address:     ['']
+      address:     [''],
+      subscription_plan: ['Basic']
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const plan = params['plan'];
+      if (['Basic', 'Pro', 'Enterprise'].includes(plan)) {
+        this.selectedPlan = plan;
+        this.registerForm.patchValue({ subscription_plan: plan });
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -40,25 +55,31 @@ export class RegisterComponent {
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+    this.cdr.detectChanges();
   }
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
+      this.cdr.detectChanges();
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     this.authService.registerClinic(this.registerForm.value).subscribe({
       next: (res) => {
         this.authService.saveSession(res.token, res.user);
-        this.router.navigate(['/dashboard']);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        this.router.navigate(['/dashboard/overview']);
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
         this.errorMessage = err.error?.error || 'حدث خطأ أثناء إنشاء حساب العيادة. يرجى المحاولة مرة أخرى.';
+        this.cdr.detectChanges();
       }
     });
   }

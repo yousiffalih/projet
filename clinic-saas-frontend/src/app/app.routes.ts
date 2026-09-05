@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
+import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardLayoutComponent } from './pages/dashboard-layout/dashboard-layout.component';
 import { OverviewComponent } from './pages/overview/overview.component';
 import { PatientsComponent } from './pages/patients/patients.component';
 import { AppointmentsComponent } from './pages/appointments/appointments.component';
+import { PrescriptionsComponent } from './pages/prescriptions/prescriptions.component';
 import { DoctorsComponent } from './pages/doctors/doctors.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { SettingsComponent } from './pages/settings/settings.component';
@@ -17,10 +19,14 @@ import { SuperadminDashboardComponent } from './pages/superadmin-dashboard/super
 import { SuperadminClinicsComponent } from './pages/superadmin-clinics/superadmin-clinics.component';
 import { superAdminGuard, superAdminGuestGuard } from './guards/super-admin.guard';
 
+import { FindDoctorComponent } from './pages/find-doctor/find-doctor.component';
+import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
+
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+  { path: 'register', component: RegisterComponent },
+  { path: 'find-doctor', component: FindDoctorComponent },
   
   // جميع صفحات لوحة التحكم داخل الهيكل المشترك (Layout)
   {
@@ -31,7 +37,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'overview', component: OverviewComponent },
       { path: 'patients', component: PatientsComponent },
+      { path: 'patients/:id', component: PatientProfileComponent },
       { path: 'appointments', component: AppointmentsComponent },
+      { path: 'prescriptions', component: PrescriptionsComponent },
       { path: 'doctors', component: DoctorsComponent },
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent }

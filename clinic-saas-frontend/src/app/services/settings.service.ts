@@ -23,6 +23,15 @@ export interface UserProfile {
   created_at: string;
 }
 
+export interface AvailabilityConfig {
+  working_days: string[];
+  start_time: string;
+  end_time: string;
+  slot_duration: number;
+  break_start?: string | null;
+  break_end?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   private readonly api = 'http://localhost:5001/api/settings';
@@ -47,5 +56,13 @@ export class SettingsService {
 
   changePassword(data: { current_password: string; new_password: string }): Observable<{ message: string }> {
     return this.http.put<{ message: string }>(`${this.api}/password`, data);
+  }
+
+  getAvailability(): Observable<AvailabilityConfig> {
+    return this.http.get<AvailabilityConfig>(`${this.api}/availability`);
+  }
+
+  updateAvailability(data: AvailabilityConfig): Observable<{ message: string; availability: AvailabilityConfig }> {
+    return this.http.put<{ message: string; availability: AvailabilityConfig }>(`${this.api}/availability`, data);
   }
 }

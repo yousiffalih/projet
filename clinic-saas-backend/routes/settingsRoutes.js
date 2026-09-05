@@ -5,7 +5,9 @@ import {
   updateClinicInfo,
   getMyProfile,
   updateMyProfile,
-  changePassword
+  changePassword,
+  getAvailability,
+  updateAvailability
 } from '../controllers/settingsController.js';
 
 const router = Router();
@@ -23,5 +25,9 @@ router.put('/profile',   updateMyProfile);
 
 // تغيير كلمة المرور
 router.put('/password',  changePassword);
+
+// أوقات وتوفر العمل
+router.get('/availability', getAvailability);
+router.put('/availability', updateAvailability);
 
 export default router;

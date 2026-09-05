@@ -62,8 +62,10 @@ export class AppointmentService {
   }
 
   /** للاستخدام المباشر (بدون cache) */
-  getAll(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(this.apiUrl);
+  getAll(params?: { patient_id?: number }): Observable<any[]> {
+    const qp: Record<string, string> = {};
+    if (params?.patient_id) qp['patient_id'] = params.patient_id.toString();
+    return this.http.get<any[]>(this.apiUrl, { params: qp });
   }
 
   getDoctors(): Observable<Doctor[]> {

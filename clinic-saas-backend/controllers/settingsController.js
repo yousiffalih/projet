@@ -136,3 +136,72 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ error: 'حدث خطأ أثناء تغيير كلمة المرور' });
   }
 };
+
+// ─── جلب جدول أوقات وتوفر العيادة ──────────────────────────────────────────
+export const getAvailability = async (req, res) => {
+  try {
+    const { clinic_id } = req.user;
+    const result = await pool.query(
+      'SELECT working_days, start_time, end_time, slot_duration, break_start, break_end FROM doctor_availability WHERE clinic_id = $1 LIMIT 1',
+      [clinic_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({
+        working_days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
+        start_time: '09:00',
+        end_time: '17:00',
+        slot_duration: 30,
+        break_start: null,
+        break_end: null
+      });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('[getAvailability Error]:', err.message);
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب أوقات العمل' });
+  }
+};
+
+// ─── تحديث جدول أوقات وتوفر العيادة ────────────────────────────────────────
+export const updateAvailability = async (req, res) => {
+  try {
+    const { clinic_id, id: user_id } = req.user;
+    const { working_days, start_time, end_time, slot_duration, break_start, break_end } = req.body;
+
+    const daysJson = JSON.stringify(working_days || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu']);
+    const cleanStart = start_time || '09:00';
+    const cleanEnd = end_time || '17:00';
+    const cleanDuration = parseInt(slot_duration, 10) || 30;
+
+    const check = await pool.query('SELECT id FROM doctor_availability WHERE clinic_id = $1 LIMIT 1', [clinic_id]);
+
+    let result;
+    if (check.rows.length > 0) {
+      result = await pool.query(
+        `UPDATE doctor_availability
+         SET working_days = $1, start_time = $2, end_time = $3, slot_duration = $4, break_start = $5, break_end = $6, updated_at = CURRENT_TIMESTAMP
+         WHERE clinic_id = $7
+         RETURNING working_days, start_time, end_time, slot_duration, break_start, break_end`,
+        [daysJson, cleanStart, cleanEnd, cleanDuration, break_start || null, break_end || null, clinic_id]
+      );
+    } else {
+      result = await pool.query(
+        `INSERT INTO doctor_availability (clinic_id, doctor_id, working_days, start_time, end_time, slot_duration, break_start, break_end)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING working_days, start_time, end_time, slot_duration, break_start, break_end`,
+        [clinic_id, user_id, daysJson, cleanStart, cleanEnd, cleanDuration, break_start || null, break_end || null]
+      );
+    }
+
+    res.status(200).json({
+      message: 'تم حفظ جدول وساعات الدوام بنجاح',
+      availability: result.rows[0]
+    });
+  } catch (err) {
+    console.error('[updateAvailability Error]:', err.message);
+    res.status(500).json({ error: 'حدث خطأ أثناء حفظ أوقات العمل' });
+  }
+};
+

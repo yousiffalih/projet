@@ -61,6 +61,10 @@ export class PatientService {
     return this.http.get<Patient[]>(this.apiUrl);
   }
 
+  getById(id: number): Observable<Patient> {
+    return this.http.get<Patient>(`${this.apiUrl}/${id}`);
+  }
+
   create(patient: Patient): Observable<{ message: string; patient: Patient }> {
     return this.http.post<{ message: string; patient: Patient }>(this.apiUrl, patient).pipe(
       tap((res) => {

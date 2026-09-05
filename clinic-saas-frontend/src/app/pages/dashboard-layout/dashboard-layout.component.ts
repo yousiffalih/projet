@@ -15,12 +15,13 @@ export class DashboardLayoutComponent implements OnInit {
   sidebarOpen = signal(true);
 
   navItems = [
-    { label: 'لوحة التحكم', icon: 'dashboard', route: '/dashboard/overview' },
-    { label: 'المرضى',       icon: 'patients',  route: '/dashboard/patients' },
-    { label: 'المواعيد',     icon: 'calendar',  route: '/dashboard/appointments' },
-    { label: 'الأطباء',      icon: 'doctors',   route: '/dashboard/doctors' },
-    { label: 'التقارير',     icon: 'reports',   route: '/dashboard/reports' },
-    { label: 'الإعدادات',    icon: 'settings',  route: '/dashboard/settings' },
+    { label: 'لوحة التحكم',   icon: 'dashboard',     route: '/dashboard/overview' },
+    { label: 'المرضى',         icon: 'patients',      route: '/dashboard/patients' },
+    { label: 'المواعيد',       icon: 'calendar',      route: '/dashboard/appointments' },
+    { label: 'الوصفات الطبية', icon: 'prescriptions', route: '/dashboard/prescriptions' },
+    { label: 'الأطباء',        icon: 'doctors',       route: '/dashboard/doctors' },
+    { label: 'التقارير',       icon: 'reports',       route: '/dashboard/reports' },
+    { label: 'الإعدادات',      icon: 'settings',      route: '/dashboard/settings' },
   ];
 
   constructor(private authService: AuthService, private router: Router) {}

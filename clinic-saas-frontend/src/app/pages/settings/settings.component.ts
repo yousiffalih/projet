@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { SettingsService, ClinicInfo, UserProfile } from '../../services/settings.service';
+import { SettingsService, ClinicInfo, UserProfile, AvailabilityConfig } from '../../services/settings.service';
 
-type ActiveTab = 'clinic' | 'profile' | 'password';
+type ActiveTab = 'clinic' | 'profile' | 'password' | 'availability';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
@@ -20,20 +20,42 @@ export class SettingsComponent implements OnInit, OnDestroy {
   // ─── State ──────────────────────────────────────────────────────────
   isLoadingClinic  = true;
   isLoadingProfile = true;
+  isLoadingAvailability = true;
+
   isSavingClinic   = false;
   isSavingProfile  = false;
   isSavingPassword = false;
+  isSavingAvailability = false;
 
   clinicError   = '';
   profileError  = '';
   passwordError = '';
+  availabilityError = '';
 
   clinicSuccess   = '';
   profileSuccess  = '';
   passwordSuccess = '';
+  availabilitySuccess = '';
 
   clinic:  ClinicInfo  | null = null;
   profile: UserProfile | null = null;
+
+  availabilityConfig: AvailabilityConfig = {
+    working_days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
+    start_time: '09:00',
+    end_time: '17:00',
+    slot_duration: 30
+  };
+
+  weekDays = [
+    { code: 'Sun', label: 'الأحد' },
+    { code: 'Mon', label: 'الإثنين' },
+    { code: 'Tue', label: 'الثلاثاء' },
+    { code: 'Wed', label: 'الأربعاء' },
+    { code: 'Thu', label: 'الخميس' },
+    { code: 'Fri', label: 'الجمعة' },
+    { code: 'Sat', label: 'السبت' }
+  ];
 
   showCurrentPassword = false;
   showNewPassword     = false;
@@ -73,6 +95,68 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadClinic();
     this.loadProfile();
+    this.loadAvailability();
+  }
+
+  loadAvailability(): void {
+    this.isLoadingAvailability = true;
+    const sub = this.settingsService.getAvailability().subscribe({
+      next: (data) => {
+        if (data) {
+          this.availabilityConfig = {
+            working_days: data.working_days || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
+            start_time: data.start_time || '09:00',
+            end_time: data.end_time || '17:00',
+            slot_duration: data.slot_duration || 30
+          };
+        }
+        this.isLoadingAvailability = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoadingAvailability = false;
+        this.cdr.detectChanges();
+      }
+    });
+    this.subs.push(sub);
+  }
+
+  isDayWorking(code: string): boolean {
+    return this.availabilityConfig.working_days.includes(code);
+  }
+
+  toggleWorkingDay(code: string): void {
+    const days = [...this.availabilityConfig.working_days];
+    const idx = days.indexOf(code);
+    if (idx > -1) {
+      days.splice(idx, 1);
+    } else {
+      days.push(code);
+    }
+    this.availabilityConfig.working_days = days;
+    this.cdr.detectChanges();
+  }
+
+  saveAvailability(): void {
+    this.isSavingAvailability = true;
+    this.availabilityError = '';
+    this.availabilitySuccess = '';
+    this.cdr.detectChanges();
+
+    const sub = this.settingsService.updateAvailability(this.availabilityConfig).subscribe({
+      next: (res) => {
+        this.isSavingAvailability = false;
+        this.availabilitySuccess = res.message || 'تم حفظ أوقات العمل بنجاح';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.availabilitySuccess = ''; this.cdr.detectChanges(); }, 4000);
+      },
+      error: (err) => {
+        this.isSavingAvailability = false;
+        this.availabilityError = err.error?.error || 'فشل حفظ أوقات العمل';
+        this.cdr.detectChanges();
+      }
+    });
+    this.subs.push(sub);
   }
 
   ngOnDestroy(): void {

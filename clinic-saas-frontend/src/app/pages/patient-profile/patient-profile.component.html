@@ -1,0 +1,396 @@
+<div dir="rtl" class="space-y-6">
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="space-y-6 animate-pulse">
+    <div class="flex gap-4 items-start">
+      <div class="w-20 h-20 rounded-3xl bg-slate-800"></div>
+      <div class="flex-1 space-y-2 pt-2">
+        <div class="h-6 bg-slate-800 rounded-full w-1/3"></div>
+        <div class="h-4 bg-slate-800 rounded-full w-1/4"></div>
+      </div>
+    </div>
+    <div class="h-32 bg-slate-800 rounded-2xl"></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div *ngFor="let s of skeletonRows" class="h-10 bg-slate-800 rounded-xl"></div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="flex flex-col items-center justify-center py-20 text-center">
+    <div class="w-16 h-16 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-400 text-3xl mb-4">⚠️</div>
+    <p class="text-white font-bold">{{ error }}</p>
+    <a routerLink="/dashboard/patients" class="mt-4 text-teal-400 hover:text-teal-300 text-sm">← العودة لقائمة المرضى</a>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && patient">
+
+    <!-- ── Success Toast ── -->
+    <div *ngIf="successMsg"
+      class="mb-4 flex items-center gap-3 bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm rounded-2xl px-5 py-3.5">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      {{ successMsg }}
+    </div>
+
+    <!-- ── Patient Hero Card ── -->
+    <div class="bg-gradient-to-l from-slate-900 to-slate-900/50 border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+
+        <!-- Identity -->
+        <div class="flex items-center gap-5">
+          <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center text-slate-950 text-3xl font-extrabold shadow-xl shadow-teal-500/20 flex-shrink-0">
+            {{ patient.full_name?.charAt(0) || 'م' }}
+          </div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ patient.full_name }}</h1>
+            <div class="flex flex-wrap items-center gap-3 mt-2">
+              <span class="text-xs text-slate-400">{{ getGenderLabel(patient.gender) }}</span>
+              <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+              <span class="text-xs text-slate-400">{{ getAge(patient.date_of_birth) }}</span>
+              <span class="w-1 h-1 bg-slate-600 rounded-full" *ngIf="patient.phone"></span>
+              <span *ngIf="patient.phone" class="text-xs text-slate-300 font-mono" dir="ltr">{{ patient.phone }}</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="text-xs text-slate-500">رقم الملف: #{{ patient.id }}</span>
+              <span class="text-xs text-slate-600">|</span>
+              <span class="text-xs text-slate-500">تسجيل: {{ patient.created_at | date:'d MMM y' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Header -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <a routerLink="/dashboard/patients"
+            class="flex items-center gap-2 text-slate-400 hover:text-white text-xs px-3 py-2 rounded-xl hover:bg-white/5 transition-all">
+            ← المرضى
+          </a>
+          <button *ngIf="!isEditing" (click)="startEdit()"
+            class="flex items-center gap-2 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 text-xs font-bold px-4 py-2.5 rounded-xl border border-teal-500/20 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            تعديل البيانات
+          </button>
+          <a [routerLink]="['/dashboard/prescriptions']" [queryParams]="{ search: patient.full_name }"
+            class="flex items-center gap-2 bg-gradient-to-l from-teal-400 to-blue-500 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/20 active:scale-95 transition-all">
+            💊 إصدار وصفة
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Quick KPIs -->
+      <div class="grid grid-cols-3 gap-3 mt-6">
+        <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center">
+          <p class="text-2xl font-extrabold text-teal-400">{{ prescriptions.length }}</p>
+          <p class="text-slate-400 text-xs mt-0.5">وصفة طبية</p>
+        </div>
+        <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center">
+          <p class="text-2xl font-extrabold text-blue-400">{{ appointments.length }}</p>
+          <p class="text-slate-400 text-xs mt-0.5">موعد مسجّل</p>
+        </div>
+        <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center">
+          <p class="text-2xl font-extrabold text-amber-400">
+            {{ appointments.length > 0 ? ((appointments[0].appointment_date) | date:'d/M') : '—' }}
+          </p>
+          <p class="text-slate-400 text-xs mt-0.5">آخر زيارة</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Tab Navigation ── -->
+    <div class="flex items-center gap-1 bg-slate-900 border border-white/5 rounded-2xl p-1.5">
+      <button (click)="setTab('info')"
+        [class]="activeTab === 'info' ? 'bg-teal-500/10 text-teal-300 border border-teal-500/20' : 'text-slate-400 hover:text-white'"
+        class="flex-1 text-xs font-semibold px-3 py-2 rounded-xl transition-all">
+        📋 البيانات الشخصية
+      </button>
+      <button (click)="setTab('prescriptions')"
+        [class]="activeTab === 'prescriptions' ? 'bg-teal-500/10 text-teal-300 border border-teal-500/20' : 'text-slate-400 hover:text-white'"
+        class="flex-1 text-xs font-semibold px-3 py-2 rounded-xl transition-all">
+        💊 الوصفات ({{ prescriptions.length }})
+      </button>
+      <button (click)="setTab('appointments')"
+        [class]="activeTab === 'appointments' ? 'bg-teal-500/10 text-teal-300 border border-teal-500/20' : 'text-slate-400 hover:text-white'"
+        class="flex-1 text-xs font-semibold px-3 py-2 rounded-xl transition-all">
+        📅 المواعيد ({{ appointments.length }})
+      </button>
+      <button (click)="setTab('history')"
+        [class]="activeTab === 'history' ? 'bg-teal-500/10 text-teal-300 border border-teal-500/20' : 'text-slate-400 hover:text-white'"
+        class="flex-1 text-xs font-semibold px-3 py-2 rounded-xl transition-all">
+        🩺 السجل الطبي
+      </button>
+    </div>
+
+    <!-- ══════════════════════ TAB: INFO ══════════════════════ -->
+    <div *ngIf="activeTab === 'info'" class="bg-slate-900 border border-white/5 rounded-3xl p-6 shadow-xl">
+      
+      <!-- View Mode -->
+      <div *ngIf="!isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">الاسم الكامل</p>
+          <p class="text-white font-bold">{{ patient.full_name }}</p>
+        </div>
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">البريد الإلكتروني</p>
+          <p class="text-white font-medium">{{ patient.email || '—' }}</p>
+        </div>
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">رقم الهاتف</p>
+          <p class="text-white font-medium font-mono" dir="ltr">{{ patient.phone || '—' }}</p>
+        </div>
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">تاريخ الميلاد / العمر</p>
+          <p class="text-white font-medium">
+            {{ patient.date_of_birth | date:'d MMM y' }} — {{ getAge(patient.date_of_birth) }}
+          </p>
+        </div>
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">الجنس</p>
+          <p class="text-white font-medium">{{ getGenderLabel(patient.gender) }}</p>
+        </div>
+        <div class="space-y-1 p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+          <p class="text-slate-500 text-xs">العنوان</p>
+          <p class="text-white font-medium">{{ patient.address || '—' }}</p>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div *ngIf="isEditing" class="space-y-4">
+        <h3 class="text-white font-bold text-sm mb-3">✏️ تعديل بيانات المريض</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">الاسم الكامل *</label>
+            <input [(ngModel)]="editData.full_name" type="text"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+          </div>
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">البريد الإلكتروني</label>
+            <input [(ngModel)]="editData.email" type="email"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+          </div>
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">رقم الهاتف</label>
+            <input [(ngModel)]="editData.phone" type="tel" dir="ltr"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+          </div>
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">تاريخ الميلاد</label>
+            <input [(ngModel)]="editData.date_of_birth" type="date"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+          </div>
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">الجنس</label>
+            <select [(ngModel)]="editData.gender"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+              <option value="">— اختر —</option>
+              <option value="male">ذكر</option>
+              <option value="female">أنثى</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 text-xs mb-1.5 block">العنوان</label>
+            <input [(ngModel)]="editData.address" type="text"
+              class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-teal-500/40">
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button (click)="cancelEdit()"
+            class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors">
+            إلغاء
+          </button>
+          <button (click)="saveEdit()" [disabled]="isSaving"
+            class="flex-1 bg-gradient-to-l from-teal-400 to-blue-500 text-slate-950 text-sm font-bold py-2.5 rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+            <svg *ngIf="isSaving" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            {{ isSaving ? 'جارٍ الحفظ...' : 'حفظ التعديلات' }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════ TAB: PRESCRIPTIONS ══════════════════ -->
+    <div *ngIf="activeTab === 'prescriptions'" class="bg-slate-900 border border-white/5 rounded-3xl shadow-xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+        <h3 class="text-white font-bold text-sm">سجل الوصفات الطبية للمريض</h3>
+        <a [routerLink]="['/dashboard/prescriptions']" [queryParams]="{ search: patient.full_name }"
+          class="text-teal-400 text-xs hover:text-teal-300 transition-colors">+ إضافة وصفة جديدة</a>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="prescriptions.length === 0" class="py-12 text-center">
+        <div class="text-4xl mb-3">💊</div>
+        <p class="text-slate-400 text-sm">لا توجد وصفات طبية مسجلة لهذا المريض بعد</p>
+      </div>
+
+      <!-- Prescriptions List -->
+      <div *ngIf="prescriptions.length > 0" class="divide-y divide-white/5">
+        <div *ngFor="let rx of prescriptions" class="flex items-start justify-between px-6 py-5 hover:bg-white/[0.02] transition-colors">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2 py-0.5 rounded-full font-medium">
+                {{ rx.diagnosis }}
+              </span>
+              <span class="text-slate-500 text-xs">{{ rx.created_at | date:'d MMM y' }}</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-1">
+              <span *ngFor="let med of rx.medicines; let last = last">
+                {{ med.name }} ({{ med.dosage }}){{ last ? '' : ' · ' }}
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">{{ rx.doctor_name || 'الطبيب المعالج' }}</p>
+          </div>
+          <button (click)="openRxPrint(rx)"
+            class="flex items-center gap-1.5 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 text-xs font-semibold px-3 py-1.5 rounded-xl border border-teal-500/20 transition-all flex-shrink-0 mr-4">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+            </svg>
+            طباعة
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ TAB: APPOINTMENTS ════════════════════ -->
+    <div *ngIf="activeTab === 'appointments'" class="bg-slate-900 border border-white/5 rounded-3xl shadow-xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-white/5">
+        <h3 class="text-white font-bold text-sm">سجل المواعيد الطبية</h3>
+      </div>
+
+      <div *ngIf="appointments.length === 0" class="py-12 text-center">
+        <div class="text-4xl mb-3">📅</div>
+        <p class="text-slate-400 text-sm">لا توجد مواعيد مسجلة لهذا المريض بعد</p>
+      </div>
+
+      <div *ngIf="appointments.length > 0" class="divide-y divide-white/5">
+        <div *ngFor="let appt of appointments" class="flex items-center justify-between px-6 py-4 hover:bg-white/[0.02] transition-colors">
+          <div class="flex items-center gap-4">
+            <div class="font-mono text-slate-400 text-xs text-left min-w-[80px]">
+              <p class="text-white font-bold">{{ appt.appointment_date | date:'d/M/y' }}</p>
+              <p>{{ (appt.appointment_time || '').slice(0,5) }}</p>
+            </div>
+            <div>
+              <p class="text-white text-sm font-medium">{{ appt.doctor_name || 'طبيب العيادة' }}</p>
+              <p class="text-slate-500 text-xs">{{ appt.type || 'كشف طبي' }}</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold px-3 py-1 rounded-full" [class]="getStatusClass(appt.status || '')">
+            {{ getStatusLabel(appt.status || '') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ TAB: MEDICAL HISTORY ══════════════════ -->
+    <div *ngIf="activeTab === 'history'" class="bg-slate-900 border border-white/5 rounded-3xl p-6 shadow-xl">
+      <h3 class="text-white font-bold text-sm mb-4 flex items-center gap-2">
+        🩺 السجل الصحي والتاريخ المرضي
+      </h3>
+
+      <!-- Medical History Text -->
+      <div *ngIf="!isEditing" class="space-y-4">
+        <div class="p-5 bg-white/[0.02] border border-white/5 rounded-2xl">
+          <p class="text-slate-400 text-xs mb-2 font-semibold">التاريخ المرضي وأمراض الحساسية</p>
+          <p class="text-slate-200 text-sm leading-relaxed whitespace-pre-line">
+            {{ patient.medical_history || 'لا يوجد تاريخ مرضي مسجّل لهذا المريض.' }}
+          </p>
+        </div>
+
+        <!-- Allergies extracted from prescriptions -->
+        <div *ngIf="prescriptions.length > 0" class="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+          <p class="text-amber-400 text-xs font-bold mb-2">⚠️ ملاحظة هامة للطبيب</p>
+          <p class="text-amber-300/80 text-xs">يرجى الاطلاع على السجل الطبي وملف الحساسية قبل إصدار أي وصفة طبية جديدة.</p>
+        </div>
+      </div>
+
+      <!-- Edit Medical History -->
+      <div *ngIf="isEditing">
+        <label class="text-slate-400 text-xs mb-1.5 block">التاريخ المرضي والملاحظات الطبية</label>
+        <textarea [(ngModel)]="editData.medical_history" rows="6"
+          placeholder="سجّل هنا: الأمراض المزمنة، الحساسية من أدوية، العمليات الجراحية السابقة، ملاحظات مهمة..."
+          class="w-full bg-slate-800 border border-white/5 text-white text-sm rounded-xl p-4 outline-none focus:ring-2 focus:ring-teal-500/40 placeholder-slate-600 leading-relaxed">
+        </textarea>
+        <div class="flex gap-3 mt-3">
+          <button (click)="cancelEdit()"
+            class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors">
+            إلغاء
+          </button>
+          <button (click)="saveEdit()" [disabled]="isSaving"
+            class="flex-1 bg-gradient-to-l from-teal-400 to-blue-500 text-slate-950 text-sm font-bold py-2.5 rounded-xl transition-all disabled:opacity-60">
+            {{ isSaving ? 'جارٍ الحفظ...' : 'حفظ السجل الطبي' }}
+          </button>
+        </div>
+      </div>
+
+      <button *ngIf="!isEditing" (click)="setTab('info'); startEdit()"
+        class="mt-4 text-teal-400 hover:text-teal-300 text-xs font-medium transition-colors">
+        ← تعديل السجل الطبي
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ PRINT MODAL (Prescription PDF) ══ -->
+  <div *ngIf="showPrintModal && selectedRx" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" dir="rtl">
+    <div class="bg-white text-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="print:hidden bg-slate-950 text-white px-6 py-4 flex items-center justify-between">
+        <span class="text-sm font-bold">معاينة الروشتة الطبية</span>
+        <div class="flex gap-3">
+          <button (click)="printRx()"
+            class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl transition-all">
+            طباعة / PDF
+          </button>
+          <button (click)="closePrintModal()" class="text-slate-400 hover:text-white p-1">✕</button>
+        </div>
+      </div>
+      <div id="printable-rx" class="p-8 bg-white overflow-y-auto space-y-6">
+        <div class="flex justify-between border-b-2 border-slate-900 pb-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-teal-800">{{ selectedRx.clinic_name }}</h2>
+            <p class="text-slate-500 text-xs">{{ selectedRx.clinic_address }}</p>
+            <p class="text-slate-500 text-xs font-mono" dir="ltr">{{ selectedRx.clinic_phone }}</p>
+          </div>
+          <div class="text-right">
+            <div class="w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center font-black text-lg">Rx</div>
+            <p class="text-xs text-slate-500 mt-1">رقم: #{{ selectedRx.id }}</p>
+            <p class="text-xs text-slate-500 font-mono">{{ selectedRx.created_at | date:'yyyy-MM-dd' }}</p>
+          </div>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 text-xs grid grid-cols-2 gap-3">
+          <div><span class="text-slate-500">المريض: </span><strong>{{ selectedRx.patient_name }}</strong></div>
+          <div><span class="text-slate-500">الطبيب: </span><strong class="text-teal-800">{{ selectedRx.doctor_name }}</strong></div>
+        </div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl px-4 py-2 text-xs">
+          <strong>التشخيص: </strong>{{ selectedRx.diagnosis }}
+        </div>
+        <div class="space-y-3">
+          <div *ngFor="let med of selectedRx.medicines; let i = index"
+            class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center text-[10px]">{{ i+1 }}</span>
+              <strong class="text-sm">{{ med.name }}</strong>
+              <span class="text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full">{{ med.dosage }}</span>
+            </div>
+            <p class="text-slate-600 mr-7">{{ med.frequency }} · {{ med.duration }}</p>
+          </div>
+        </div>
+        <div *ngIf="selectedRx.notes" class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs">
+          <strong class="text-amber-900">تعليمات الطبيب: </strong>{{ selectedRx.notes }}
+        </div>
+        <div class="pt-6 border-t border-slate-200 flex justify-end">
+          <div class="text-center">
+            <div class="w-28 h-10 border-b-2 border-dashed border-slate-400 mb-2"></div>
+            <p class="text-xs text-slate-600 font-bold">{{ selectedRx.doctor_name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
